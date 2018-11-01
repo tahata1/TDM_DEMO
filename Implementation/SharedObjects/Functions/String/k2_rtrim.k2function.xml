@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>k2_rtrim</Name>
+  <ID>String.k2_rtrim</ID>
+  <Category>String</Category>
+  <FunctionLevel>Product</FunctionLevel>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc>Strip whitespace (or other characters) from the end of a string</Desc>
+  <Auther name="" id="" />
+  <Language>PHP</Language>
+  <FunctionBody>if ($i_charList == '') $i_charList = ' ';
+return rtrim($i_str1,$i_charList);</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <InputParams>
+    <Input name="i_str1" id="fi.String.k2_rtrim.0" index="0" dataType="text" />
+    <Input name="i_charList" id="fi.String.k2_rtrim.1" index="1" dataType="text" />
+  </InputParams>
+  <OutputParams>
+    <Output name="o_str1" id="fo.String.k2_rtrim.0" index="0" dataType="text" />
+  </OutputParams>
+</KFunction>

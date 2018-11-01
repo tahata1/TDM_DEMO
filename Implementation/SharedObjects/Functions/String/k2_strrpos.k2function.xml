@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>k2_strrpos</Name>
+  <ID>String.k2_strrpos</ID>
+  <Category>String</Category>
+  <FunctionLevel>Product</FunctionLevel>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc>Find position of last occurrence of a char in a string</Desc>
+  <Auther name="" id="" />
+  <Language>PHP</Language>
+  <FunctionBody>return strrpos($haystack, $needle );</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <InputParams>
+    <Input name="haystack " id="fi.String.k2_strrpos.0" index="0" dataType="text" />
+    <Input name="needle " id="fi.String.k2_strrpos.1" index="1" dataType="text" />
+  </InputParams>
+  <OutputParams>
+    <Output name="pos" id="fo.String.k2_strrpos.0" index="0" dataType="integer" />
+  </OutputParams>
+</KFunction>

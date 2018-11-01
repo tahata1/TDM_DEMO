@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DBConn xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DBConnPostgreSQL" name="TDM" type="PostgreSQL" version="2.6.4.0">
+  <Aliases />
+  <Active>true</Active>
+  <DataSource>10.21.2.69</DataSource>
+  <PortNum>5432</PortNum>
+  <DataBase>TDMDB</DataBase>
+  <UserId>tdm</UserId>
+  <Password>TIhdKX5qh2E1t7m18RF97cfjuPdFSKbrE1La8HZWlYU=:KYk8qhE9fVM6d84/NJqzhah7AtZ4zoy86JEbz3T0GFo=</Password>
+  <ConnectionStringClient>Server='10.21.2.69';Port=5432;Database='TDMDB';User Id='tdm';Password='[PASSWORD]';</ConnectionStringClient>
+  <ConnectionStringServerSide>host='10.21.2.69' port=5432 dbname='TDMDB' user='tdm' password='[PASSWORD]' sslmode=disable connect_timeout=5 options='--client_encoding=UTF8'</ConnectionStringServerSide>
+  <UseSelectAsteriskInAutoCreatedQueries>true</UseSelectAsteriskInAutoCreatedQueries>
+  <CommandList>
+    <Command builtinCommand="true" enabledClient="true" enabledServer="true">
+      <SQL><![CDATA[SET DATESTYLE TO ISO]]></SQL>
+    </Command>
+    <Command builtinCommand="true" enabledClient="true" enabledServer="true">
+      <SQL><![CDATA[SET bytea_output="escape"]]></SQL>
+    </Command>
+  </CommandList>
+  <DBSourceList />
+  <ProviderType>Npgsql</ProviderType>
+</DBConn>

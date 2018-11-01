@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.5.4.19">
+  <Name>k2_dropSharedSeq</Name>
+  <ID>SharedSequences.k2_dropSharedSeq</ID>
+  <Category>SharedSequences</Category>
+  <FunctionLevel>Product</FunctionLevel>
+  <FunctionType>RegularFunction</FunctionType>
+  <FunctionType2>RegularFunction</FunctionType2>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <ApiFunction>false</ApiFunction>
+  <DecisionFunction>false</DecisionFunction>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc />
+  <Auther name="" id="" />
+  <Language>PHP</Language>
+  <FunctionBody>return dropSequence($seqName);</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <IsRootFunction>false</IsRootFunction>
+  <InputParams>
+    <Input name="seqName" id="fi.SharedSequences.k2_dropSharedSeq.0" index="0" dataType="text">
+      <Comment />
+    </Input>
+  </InputParams>
+  <OutputParams>
+    <Output name="succ" id="fo.SharedSequences.k2_dropSharedSeq.0" index="0" dataType="integer">
+      <Comment />
+    </Output>
+  </OutputParams>
+</KFunction>

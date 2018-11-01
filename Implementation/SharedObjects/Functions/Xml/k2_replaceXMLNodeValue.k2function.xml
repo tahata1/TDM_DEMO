@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>k2_replaceXMLNodeValue</Name>
+  <ID>XML.k2_replaceXMLNodeValue</ID>
+  <Category>XML</Category>
+  <FunctionLevel>Product</FunctionLevel>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc>replace the node value from the input XML</Desc>
+  <Auther name="" id="" />
+  <Language>PHP</Language>
+  <FunctionBody>if ($replace_y_n =='true'){
+return preg_replace("/&lt;$node&gt;.*&lt;\/$node&gt;/s","&lt;$node&gt;$value&lt;/$node&gt;",$inputXML);
+}else{
+return $inputXML;
+}</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <InputParams>
+    <Input name="inputXML" id="fi.XML.k2_replaceXMLNodeValue.0" index="0" dataType="text" />
+    <Input name="node" id="fi.XML.k2_replaceXMLNodeValue.1" index="1" dataType="text" />
+    <Input name="value" id="fi.XML.k2_replaceXMLNodeValue.2" index="2" dataType="text" />
+    <Input name="replace_y_n" id="fi.XML.k2_replaceXMLNodeValue.3" index="3" dataType="text" />
+  </InputParams>
+  <OutputParams>
+    <Output name="outputXML" id="fo.XML.k2_replaceXMLNodeValue.0" index="0" dataType="text" />
+  </OutputParams>
+</KFunction>

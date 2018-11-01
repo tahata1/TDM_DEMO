@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>k2_concat5</Name>
+  <ID>String.k2_concat5</ID>
+  <Category>String</Category>
+  <FunctionLevel>Product</FunctionLevel>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc>Concatenate upto 5 strings with defined delimiter</Desc>
+  <Auther name="" id="" />
+  <Language>PHP</Language>
+  <FunctionBody>if (!isset($i_delimiter)) $i_delimiter = '';
+  $strReturn = '';
+  if (!is_null($i_str1)) $strReturn .= $i_str1 . $i_delimiter;
+  if (!is_null($i_str2)) $strReturn .= $i_str2 . $i_delimiter;
+  if (!is_null($i_str3)) $strReturn .= $i_str3 . $i_delimiter;
+  if (!is_null($i_str4)) $strReturn .= $i_str4 . $i_delimiter;
+  if (!is_null($i_str5)) $strReturn .= $i_str5 . $i_delimiter;
+  
+  return  rtrim($strReturn,$i_delimiter);</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <InputParams>
+    <Input name="i_str1" id="fi.String.k2_concat5.0" index="0" dataType="text" />
+    <Input name="i_str2" id="fi.String.k2_concat5.1" index="1" dataType="text" />
+    <Input name="i_str3" id="fi.String.k2_concat5.2" index="2" dataType="text" />
+    <Input name="i_str4" id="fi.String.k2_concat5.3" index="3" dataType="text" />
+    <Input name="i_str5" id="fi.String.k2_concat5.4" index="4" dataType="text" />
+    <Input name="i_delimiter" id="fi.String.k2_concat5.5" index="5" dataType="text" />
+  </InputParams>
+  <OutputParams>
+    <Output name="o_str1" id="fo.String.k2_concat5.0" index="0" dataType="text" />
+  </OutputParams>
+</KFunction>

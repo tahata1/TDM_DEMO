@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>k2_breakDate</Name>
+  <ID>Date.k2_breakDate</ID>
+  <Category>Date</Category>
+  <FunctionLevel>Product</FunctionLevel>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc>see http://www.php.net/manual/en/function.date.php 
+for date format help.</Desc>
+  <Auther name="" id="" />
+  <Language>PHP</Language>
+  <FunctionBody>$da = date_parse_from_format($format, $date);
+
+return array($da['year'],$da['month'],$da['day'],$da['hour'],$da['minute'],$da['second'],$da['fraction']);</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <InputParams>
+    <Input name="date" id="fi.Date.k2_breakDate.0" index="0" dataType="text" />
+    <Input name="format" id="fi.Date.k2_breakDate.1" index="1" dataType="text" />
+  </InputParams>
+  <OutputParams>
+    <Output name="year" id="fo.Date.k2_breakDate.0" index="0" dataType="integer" />
+    <Output name="month" id="fo.Date.k2_breakDate.1" index="1" dataType="integer" />
+    <Output name="day" id="fo.Date.k2_breakDate.2" index="2" dataType="integer" />
+    <Output name="hour" id="fo.Date.k2_breakDate.3" index="3" dataType="integer" />
+    <Output name="minute" id="fo.Date.k2_breakDate.4" index="4" dataType="integer" />
+    <Output name="second" id="fo.Date.k2_breakDate.5" index="5" dataType="integer" />
+    <Output name="fraction" id="fo.Date.k2_breakDate.6" index="6" dataType="integer" />
+  </OutputParams>
+</KFunction>

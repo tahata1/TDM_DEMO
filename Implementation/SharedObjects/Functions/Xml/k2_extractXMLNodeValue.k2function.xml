@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>k2_extractXMLNodeValue</Name>
+  <ID>XML.k2_extractXMLNodeValue</ID>
+  <Category>XML</Category>
+  <FunctionLevel>Product</FunctionLevel>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc>extract the node value from the input XML</Desc>
+  <Auther name="" id="" />
+  <Language>PHP</Language>
+  <FunctionBody>if (preg_match("/&lt;$node&gt;(.*)&lt;\/$node&gt;/",$inputXML) ){
+return array (preg_replace("/.*&lt;$node&gt;(.*)&lt;\/$node&gt;.*/s","\\1",$inputXML),'true');
+}else{
+return array (preg_replace("/.*&lt;$node&gt;(.*)&lt;\/$node&gt;.*/s","\\1",$inputXML),'false');
+}</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <InputParams>
+    <Input name="inputXML" id="fi.XML.k2_extractXMLNodeValue.0" index="0" dataType="text" />
+    <Input name="node" id="fi.XML.k2_extractXMLNodeValue.1" index="1" dataType="text" />
+  </InputParams>
+  <OutputParams>
+    <Output name="value" id="fo.XML.k2_extractXMLNodeValue.0" index="0" dataType="text" />
+    <Output name="found_y_n" id="fo.XML.k2_extractXMLNodeValue.1" index="1" dataType="text" />
+  </OutputParams>
+</KFunction>

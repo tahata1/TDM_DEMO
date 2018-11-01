@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PhpScriptItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>scGetExecutionStats</Name>
+  <Code>$statsMode= getGlobalValue('STATS_REPORT_MODE');
+$LUTName = $GLOBALS['logicalUnit'];
+$TDMDB = "TDM"; //interface name of Postgres TDMDB (should be TDM)
+
+
+if($statsMode=='Fabric_Only'){ // Report with counts only from Fabric
+	$fileName = $LUTName.'_Stats_Report_Fabric_Only.csv';
+	$Path = 'C:\K2View\\tdm_reports\\'.$fileName;
+	$result = "Table Name, Fabric Count"."\r\n";
+	$luTableList = DBSelectAll('K2TDW', 'select TABLE_NAME , sum(TABLE_CNT) from '.$LUTName.'.INSTANCE_TABLE_COUNT group by TABLE_NAME', $param = array());
+	foreach ($luTableList as $tableName) {
+	//Add result to File's string
+		$result .= $tableName[0].", ".$tableName[1]."\r\n";
+	}
+	file_put_contents($Path, $result, FILE_APPEND);
+}
+else {
+
+	// Set param
+	$reportsPath = '/usr/local/k2view/k2apps/tdm_reports/';
+	if($GLOBALS['debugMode'] == true){
+		//  Note : since script is running on Debug, please dollow next steps :
+		//  1)set $exeId to the execution ID of your run
+		//  2)set $depId[2] to the deployment ID of your run
+		//  3)create a Postgres interface same as k2Proj but set user and password according to execution ID
+		//    example : PG interface called 'PG_2' , ip=172.31.27.173, port=5432, database=k2view, User=k2proj45, Password=k2proj45
+		//  4)set $k2Proj_interface to your newly created PG interface name
+		$exeId = 15;
+		$depId[2] = 30;
+		$k2Proj_interface='proj11';
+		//
+		
+		$fileName = $GLOBALS['logicalUnit'].'_Stats_Report_EXEID_'.$exeId.'.csv';
+		$Path = 'C:\K2View\\tdm_reports\\';
+		//Checking if folder exists and if not creating it
+		if(!is_dir($Path)){
+		  if(!mkdir($Path)){
+	  	  set_error_info("scGetExecutionStats", 'FAILED TO CREATE FOLDER', "Failed to create folder on path:".$Path, E_USER_ERROR, '', array('Folder Path'.$Path));
+			trigger_error($GLOBALS['lastErrorMessage']['errStr'], $GLOBALS['lastErrorMessage']['errNo']);
+		   }
+		}
+		$Path = 'C:\K2View\\tdm_reports\\'.$fileName;
+		
+	}else{
+		//Checking if folder exists and if not creating it
+		if(!is_dir($reportsPath)){
+		  if(!mkdir($reportsPath)){
+			set_error_info("scGetExecutionStats", 'FAILED TO CREATE FOLDER', "Failed to create folder on path:".$Path, E_USER_ERROR, '', array('Folder Path'.$Path));
+			trigger_error($GLOBALS['lastErrorMessage']['errStr'], $GLOBALS['lastErrorMessage']['errNo']);
+		  }
+		}
+		$k2Proj_interface='k2Proj'; // Note: do not change this k2Proj value since we are NOT in debug mode
+		$exeId = k2_getExecutionId();
+		$depId = k2_getProcessExecutionInfo();
+		$fileName = $GLOBALS['logicalUnit'].'_Stats_Report_EXEID_'.$exeId.'.csv';
+		$Path = $reportsPath.$fileName;
+	}
+	
+	// Replace Sequences Addition
+	$tdmReplaceSeq = getGlobalValue('TDM_REPLACE_SEQUENCES');
+	if($tdmReplaceSeq != 'false' || $tdmReplaceSeq != 'true'){
+		set_error_info("scGetExecutionStats", 'FAILED TO SET TDM_REPLACE_SEQUENCES Global', "TDM_REPLACE_SEQUENCES Global is not set currectly, please check", '', array('TDM_REPLACE_SEQUENCES Value'.$tdmReplaceSeq));
+		trigger_error($GLOBALS['lastErrorMessage']['errStr'], $GLOBALS['lastErrorMessage']['errNo']);
+	}else{
+		if($tdmReplaceSeq &amp;&amp; getGlobalValue('TDM_INSTANCE_SEQ_NAME') != null){
+			$instanceSeqName = getGlobalValue('TDM_INSTANCE_SEQ_NAME');
+			$sequencesTransTable =  'public.TDM_SEQ_MAPPING';
+			$getNewInsVale = true;
+		}else{
+			$getNewInsVale = false;
+		}
+	}
+	
+	
+	
+	
+	$entityLevel = 'N';
+	$trnTableName = 'trnTableNames';//In case not all table names are equale between fabric and target
+	$entitiesTable = 'k2proj'.$exeId.'.k2ei_'.$exeId.'_'.$depId[2];
+	$statsTable =  'k2proj'.$exeId.'.stats_'.$exeId.'_'.$depId[2];
+	
+	//Creation of indexes for performance
+	DBExecute($k2Proj_interface,"CREATE INDEX tdm_stats_ix1 ON log_messages1(value1)");
+	DBExecute($k2Proj_interface,"CREATE index tdm_stats_ix2 ON ".$statsTable."(entity_id)");
+	
+	//Get Execution popualtion
+	$EntitiesList = DBSelectAll($k2Proj_interface, 'select entity_id from '.$entitiesTable, $param = array());
+
+	if(count($EntitiesList) == 0 || $EntitiesList == null){
+		set_error_info("scGetExecutionStats", 'EMPTY EI TABLE', 'No Entities found under Entity Inclusion table !', E_USER_ERROR, '', array('Table Name'.$entitiesTable));
+	    trigger_error($GLOBALS['lastErrorMessage']['errStr'], $GLOBALS['lastErrorMessage']['errNo']);
+		exit;
+	}
+	
+	// Check if to execute per Entity
+	if($entityLevel == 'N'){
+		//Set report Header
+		$result = "Table Name, Target Count Total, Target Count Actual, Target Count Ignored, Source Count, Diff, Result"."\r\n";
+		
+		//check if TDM sequnece is on. if so, check if instance seq name has been provided. if so, get the new instance value
+		if($getNewInsVale){
+			$newSeqEntitiesList = DBSelectAll($k2Proj_interface, 'select new_value from '.$sequencesTransTable.' where sequence_name = $1 and old_value in ('.$entList.')', $param = array($instanceSeqName)); //GILAD
+			foreach ($newSeqEntitiesList as $entityNewSeq) {
+				$newEntList .=  "'".$entityNewSeq[0]."',";
+			}
+			$targetEntList = rtrim($newEntList,',');
+			$targetInstanceList = $targetEntList;
+		}else{
+			$targetInstanceList = $entList;
+		}
+		
+		if(count($EntitiesList) &lt;= 1000){ //entity list is under 1000 - "where ENTITY_ID in (...)" can be used in the query
+			//Setting entity list
+			foreach ($EntitiesList as $entity) {
+				 $entList .=  "'".$entity[0]."',";
+			}
+			$entList = rtrim($entList,',');	
+			
+			$targetInstanceList = $entList;
+			
+			//Getting table count from Fabric	
+			$luTableList = DBSelectAll($TDMDB, 'select TABLE_NAME, sum(TABLE_COUNT) from INSTANCE_TABLE_COUNT where LU_NAME = $1 and EI in ('.$entList.') group by TABLE_NAME',SQL_FETCH_MODE_BOTH ,$param = array($LUTName));
+			
+			foreach ($luTableList as $tableName) {
+				//Check if to replace table name
+				$targetTableName = getTranslationValues($trnTableName, array(strtolower($tableName[0])) );
+				if($targetTableName[0] != '')$tableName[0] = str_replace('.','_',$targetTableName[0]);
+				
+				//Adding achi's prefix to table name
+				$columnName = 't_main_tab_'.$tableName[0];
+				
+				//Check if table was part of flow
+				//reportDebugUserMessage('Check parameters for the select of tables: - table schema: '.'k2proj'.$exeId. ', table name: '.strtolower('stats_'.$exeId.'_'.$depId[2]). ' , column name: '.strtolower($columnName));
+				$culExists = DBSelectValue($k2Proj_interface,'select 1 from information_schema.columns where table_schema = $1 and table_name = $2 and column_name = $3', $param = array('k2proj'.$exeId, strtolower('stats_'.$exeId.'_'.$depId[2]), strtolower($columnName)));
+				if($culExists == 1){
+					//Getting table count from stats
+					//$cntTarget = Counts from entities with COMPLETED status
+                    $cntTarget = DBSelectValue($k2Proj_interface, "select sum (".strtolower($columnName).") from ".$statsTable. " where entity_id in (".$targetInstanceList.") and entity_status ='completed'", $param = array());
+					
+					//$cntIgnored = Counts of all the 'DB_ERROR_IGNORED' records 
+					$cntIgnored= DBSelectValue($k2Proj_interface, ' select count(*) from k2proj'.$exeId.'.log_messages1 where log_code_id=$1 and value1=$2 and entity_id in ('.$targetInstanceList.')', $param = array('DB_ERROR_IGNORED','main_tab_'.$tableName[0]));
+					
+					//$cntTarget_Actual = Counts from entites with COMPLETED status - this will be present in report under "Target Count Actual" column
+					$cntTarget_Actual=$cntTarget;
+					
+					//Updating $cntTarget to hold the actual counts from COMPLETED entities + counts from 'DB_ERROR_IGNORED' records 
+					$cntTarget = $cntTarget+$cntIgnored;
+					
+					$diff = $cntTarget - $tableName[1];
+					$rslt = ($diff != 0)? "Not Good":"Good";			
+				}else{
+					$cntTarget = 'Table is not part of flow or Statistics is set to false in map';
+					$diff = 0;
+					$rslt = "Not Good";				
+					}
+				//Add result to File's string
+				$result .= $tableName[0].", ".$cntTarget.", ".$cntTarget_Actual.", ".$cntIgnored.", ".$tableName[1].", ".$diff.", ".$rslt."\r\n";
+			}
+		}else{ //entity list is more than 1000 - splitting the entities list to chunks to query 1000 entities in each iteration
+			foreach ($EntitiesList as $entity) {
+			$entList .=  "'".$entity[0]."',";
+			$entityCount++;	
+			if($entityCount%1000 == 0 || $entityCount == count($EntitiesList)){
+				$entList = rtrim($entList,',');
+				
+				//check if TDM sequnece is on. if so, check if instance seq name has been provided. if so, get the new instance values
+				if($getNewInsVale){
+					$newSeqEntitiesList = DBSelectAll($k2Proj_interface, 'select new_value from '.$sequencesTransTable.' where sequence_name = $1 and old_value in ('.$entList.')', $param = array($instanceSeqName));//GILAD
+					foreach ($newSeqEntitiesList as $entityNewSeq) {
+						$newEntList .=  "'".$entityNewSeq[0]."',";
+					}
+					$targetEntList = rtrim($newEntList,',');
+					$targetInstanceList = $targetEntList;
+				}else{
+					$targetInstanceList = $entList;
+				}
+					
+				$luTableList = DBSelectAll($TDMDB, 'select TABLE_NAME, sum(TABLE_COUNT) from INSTANCE_TABLE_COUNT where LU_NAME = $1 and EI in ('.$entList.') group by TABLE_NAME',SQL_FETCH_MODE_BOTH ,$param = array($LUTName));
+				
+				foreach ($luTableList as $tableName) {
+					//Check if to replace table name
+					$targetTableName = getTranslationValues($trnTableName, array(strtolower($tableName[0])) );
+					if($targetTableName[0] != '')$tableName[0] = str_replace('.','_',$targetTableName[0]);
+					
+					//Adding achi's prefix to table name
+					$columnName = 't_main_tab_'.$tableName[0];
+					
+					//Check if table was part of flow
+					$culExists = DBSelectValue($k2Proj_interface,'select 1 from information_schema.columns where table_schema = $1 and table_name = $2 and column_name = $3', $param = array('k2proj'.$exeId, strtolower('stats_'.$exeId.'_'.$depId[2]), strtolower($columnName)));
+					if($culExists == 1){
+						
+						//Getting table count from stats
+						
+						//$cntTarget = Counts from entities with COMPLETED status
+						$cntTarget = DBSelectValue($k2Proj_interface, "select sum (".strtolower($columnName).") from ".$statsTable. " where entity_id in (".$targetInstanceList.") and entity_status ='completed'", $param = array());
+						$statsResult[$tableName[0]]['TARGET_COUNT_ACTUAL'] = $statsResult[$tableName[0]]['TARGET_COUNT_ACTUAL'] + $cntTarget;
+						
+						//$cntIgnored = Counts of all the 'DB_ERROR_IGNORED' records 
+						$cntIgnored= DBSelectValue($k2Proj_interface, 'select count(*) from k2proj'.$exeId.'.log_messages1 where log_code_id=$1 and value1=$2 and entity_id in ('.$targetInstanceList.')', $param = array('DB_ERROR_IGNORED','main_tab_'.$tableName[0]));
+						$statsResult[$tableName[0]]['TARGET_COUNT_IGNORED'] = $statsResult[$tableName[0]]['TARGET_COUNT_IGNORED'] + $cntIgnored;
+						
+						//Updating $cntTarget to hold the actual counts from COMPLETED entities + counts from 'DB_ERROR_IGNORED' records 
+						$cntTarget = $cntTarget+$cntIgnored;
+						$statsResult[$tableName[0]]['TARGET_COUNT'] = $statsResult[$tableName[0]]['TARGET_COUNT'] + $cntTarget;
+					}else{
+						$cntTarget = 'Table is not part of flow or Statistics is set to false in map';
+						$statsResult[$tableName[0]]['TARGET_COUNT'] = $cntTarget;
+					}
+					
+					//Getting table count from Fabric
+					$statsResult[$tableName[0]]['SOURCE_COUNT'] = $statsResult[$tableName[0]]['SOURCE_COUNT'] + $tableName[1];
+					
+				}
+				$entList = null;
+				$targetInstanceList = null;
+				}
+			}
+			
+			
+			foreach ($statsResult as $table =&gt; $tableCount) {
+					//Add result to File's string
+					if(!is_numeric($tableCount['TARGET_COUNT']))
+					{
+						$diff = 0;
+						$rslt = "Not Good";
+					}else{
+						$diff = $tableCount['TARGET_COUNT'] - $tableCount['SOURCE_COUNT'];
+						$rslt = ($diff != 0)? "Not Good":"Good";
+					}
+					$result .= $table.", ".$tableCount['TARGET_COUNT'].", ".$tableCount['TARGET_COUNT_ACTUAL'].", ".$tableCount['TARGET_COUNT_IGNORED'].", ".$tableCount['SOURCE_COUNT'].", ".$diff.", ".$rslt."\r\n";
+			}
+		}
+		//Save to file
+		file_put_contents($Path, $result, FILE_APPEND);
+		
+	}else{ //Execute per Entity
+		//Set report Header
+		$result = "Entity ID, Table Name, Target Count Total, Target Count Actual, Target Count Ignored, Source Count, Diff, Result"."\r\n";
+		
+			foreach ($EntitiesList as $entity) {
+				//check if TDM sequnece is on. if so, check if instance seq name has been provided. if so, get the new instance values
+				if($getNewInsVale){
+					$targetEntList = DBSelectAll($k2Proj_interface, 'select new_value from '.$sequencesTransTable.' where sequence_name = $1 and old_value = $2', $param = array($instanceSeqName, $entity[0]));//GILAD
+					$targetInstanceList = $targetEntList;
+				}else{
+					$targetInstanceList = $entity[0];
+				}
+				
+				
+				$luTableList = DBSelectAll($TDMDB, 'select TABLE_NAME, sum(TABLE_COUNT) from INSTANCE_TABLE_COUNT where LU_NAME = $1 and EI = $2', SQL_FETCH_MODE_BOTH , $param = array($LUTName, $entity[0]));	
+				
+				foreach ($luTableList as $tableName) {	
+					//Check if to replace table name
+					$targetTableName = getTranslationValues($trnTableName, array(strtolower($tableName[0])) );
+					if($targetTableName[0] != '')$tableName[0] = str_replace('.','_',$targetTableName[0]);
+					
+					//Adding achi's prefix to table name
+					$columnName = 't_main_tab_'.$tableName[0];
+					
+					//Check if table was part of flow
+					$culExists = DBSelectValue($k2Proj_interface,'select 1 from information_schema.columns where table_schema = $1 and table_name = $2 and column_name = $3', $param = array('k2proj'.$exeId, strtolower('stats_'.$exeId.'_'.$depId[2]), strtolower($columnName)));
+					if($culExists == 1){
+						//Getting table count from stats
+						
+						//$cntTarget = Counts from entities with COMPLETED status
+						$cntTarget = DBSelectValue($k2Proj_interface, "select sum (".strtolower($columnName).") from ".$statsTable. " where entity_id in (".$targetInstanceList.") and entity_status ='completed'", $param = array());
+
+						//$cntTarget_Actual = Counts from entites with COMPLETED status - this will be present in report under "Target Count Actual" column
+						$cntTarget_Actual=$cntTarget;
+						
+						//$cntIgnored = Counts of all the 'DB_ERROR_IGNORED' records
+						$cntIgnored= DBSelectValue($k2Proj_interface, ' select count(*) from k2proj'.$exeId.'.log_messages1 where log_code_id=$1 and value1=$2 and entity_id = $3', $param = array('DB_ERROR_IGNORED','main_tab_'.$tableName[0],$targetInstanceList));
+						
+						//Updating $cntTarget to hold the actual counts from COMPLETED entities + counts from 'DB_ERROR_IGNORED' records
+						$cntTarget = $cntTarget+$cntIgnored;
+						}else{
+						$cntTarget = 'Table is not part of flow or Statistics is set to false in map';				
+						}
+					//Add result to File's string only if source and taget dont macth
+					if(is_numeric($cntTarget) &amp;&amp; ($cntTarget - $tableName[1]) != 0 ){
+						$diff = $cntTarget - $tableName[1];
+						$rslt = ($diff != 0)? "Not Good":"Good";
+						$result .= $entity[0].', '.$tableName[0].", ".$cntTarget.", ".$cntTarget_Actual.", ".$cntIgnored.", ".$tableName[1].", ".$diff.", ".$rslt."\r\n";
+					}
+				}
+		
+			}
+		//Save to file
+		file_put_contents($Path, $result, FILE_APPEND);
+	}
+}</Code>
+  <IsSyntaxValid>true</IsSyntaxValid>
+</PhpScriptItem>

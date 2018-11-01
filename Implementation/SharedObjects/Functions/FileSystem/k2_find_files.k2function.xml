@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>k2_find_files</Name>
+  <ID>FileSystem.k2_find_files</ID>
+  <Category>FileSystem</Category>
+  <FunctionLevel>Product</FunctionLevel>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <ApiFunction>false</ApiFunction>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc>get the list of all files matching file_regExp in a specific path</Desc>
+  <Auther name="" id="" />
+  <Language>PHP</Language>
+  <FunctionBody>return array_keys( preg_find('/' . $file_regExp . '/',$path,PREG_FIND_PARAMS));</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <InputParams>
+    <Input name="path" id="fi.FileSystem.k2_find_files.0" index="0" dataType="text">
+      <Comment>Full path</Comment>
+    </Input>
+    <Input name="file_regExp" id="fi.FileSystem.k2_find_files.1" index="1" dataType="text">
+      <Comment>regular expression filter</Comment>
+    </Input>
+  </InputParams>
+  <OutputParams>
+    <Output name="files" id="fo.FileSystem.k2_find_files.0" index="0" dataType="object">
+      <Comment />
+    </Output>
+  </OutputParams>
+</KFunction>

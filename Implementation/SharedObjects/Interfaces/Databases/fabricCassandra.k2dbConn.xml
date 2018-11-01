@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DBConn xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DBConnCassandra" name="fabricCassandra" type="Cassandra" version="2.6.4.0">
+  <Aliases />
+  <Active>true</Active>
+  <DataSource>10.21.2.69</DataSource>
+  <PortNum>9042</PortNum>
+  <UserId>admin</UserId>
+  <Password>76iW3ds4QYwyQqQPnBeC4TshcmShFFwDt3iAslXRDh4=:xT9VbQ218ec3aRI+D+FHmKmEPdRCpTwEOBjiJ5b47Dg=</Password>
+  <ConnectionStringClient>Contact Points='10.21.2.69';Port=9042;Default Keyspace='';Username='admin';Password='[PASSWORD]';</ConnectionStringClient>
+  <ConnectionStringServerSide />
+  <UseSelectAsteriskInAutoCreatedQueries>true</UseSelectAsteriskInAutoCreatedQueries>
+  <AutomaticMetadataLoading>false</AutomaticMetadataLoading>
+  <CommandList />
+  <DBSourceList />
+</DBConn>

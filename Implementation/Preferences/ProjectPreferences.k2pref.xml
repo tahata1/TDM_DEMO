@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferencesData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.6.4.0">
+  <Name>ProjectPreferences</Name>
+  <ProjServerConfig>
+    <DBConnParamsK2Proj>
+      <dbConnectionName>k2Proj</dbConnectionName>
+      <dbType>PostgreSQL</dbType>
+      <dbHost>localhost</dbHost>
+      <dbPort>5432</dbPort>
+      <dbUser>k2proj</dbUser>
+      <dbPass>iP0B7c9ASCml7G9Tvrrx+1GLZwKCHx0t0M1N3Dvc+OI=:qfGYcEnEnlvl6j1PM+LK2rU5qYOnpsGm0mvDT9U3LZg=</dbPass>
+      <dbScheme>k2view</dbScheme>
+    </DBConnParamsK2Proj>
+  </ProjServerConfig>
+  <ServerLogAttrItemsList />
+  <ColumnAliasList />
+</PreferencesData>

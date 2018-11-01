@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.5.5.3">
+  <Name>fnDecisionTdmTargetProductVersion</Name>
+  <ID>Decision.fnDecisionTdmTargetProductVersion</ID>
+  <Category>Decision</Category>
+  <FunctionLevel>Project</FunctionLevel>
+  <FunctionType>RegularFunction</FunctionType>
+  <FunctionType2>DecisionFunction</FunctionType2>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <ApiFunction>false</ApiFunction>
+  <DecisionFunction>true</DecisionFunction>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc />
+  <Auther name="" id="" />
+  <Language>PHP</Language>
+  <FunctionBody>// Tali E.- 10-May-17- fix function. TDM_TARGET_PRODUCT_VERSION global does not have true/false values, but has the actual version value.
+// When you use this function- you need to check the actuval value of product version (for example: '1')
+
+//return (strtolower(getGlobalValue('TDM_TARGET_PRODUCT_VERSION')) == 'true')?1:0;
+$decision=0;
+
+if(getGlobalValue('TDM_TARGET_PRODUCT_VERSION')== '1')
+{
+	$decision= 1;
+}
+return $decision;
+
+</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <IsRootFunction>false</IsRootFunction>
+  <InputParams>
+    <Input name="objectName" id="fi.Decision.fnDecisionTdmTargetProductVersion.0" index="0" dataType="text">
+      <Comment />
+    </Input>
+  </InputParams>
+  <OutputParams>
+    <Output name="decision" id="fo.Decision.fnDecisionTdmTargetProductVersion.0" index="0" dataType="integer">
+      <Comment />
+    </Output>
+  </OutputParams>
+</KFunction>
