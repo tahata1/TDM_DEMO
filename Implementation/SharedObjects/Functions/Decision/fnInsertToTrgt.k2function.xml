@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.6.4.0">
+  <Name>fnInsertToTrgt</Name>
+  <ID>Decision.fnInsertToTrgt</ID>
+  <Category>Decision</Category>
+  <FunctionLevel>Project</FunctionLevel>
+  <FunctionType>RegularFunction</FunctionType>
+  <FunctionType2>DecisionFunction</FunctionType2>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <ApiFunction>false</ApiFunction>
+  <DecisionFunction>true</DecisionFunction>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc />
+  <Language>PHP</Language>
+  <FunctionBody>return getGlobalValue("TDM_INSERT_TO_TARGET") === 'true'? 1:0 ;</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <IsRootFunction>false</IsRootFunction>
+  <InputParams>
+    <Input name="objectName" id="fi.Decision.fnInsertToTrgt.0" index="0" dataType="text">
+      <Comment />
+    </Input>
+  </InputParams>
+  <OutputParams>
+    <Output name="decision" id="fo.Decision.fnInsertToTrgt.0" index="0" dataType="integer">
+      <Comment />
+    </Output>
+  </OutputParams>
+  <HideMethodInUi>false</HideMethodInUi>
+</KFunction>
