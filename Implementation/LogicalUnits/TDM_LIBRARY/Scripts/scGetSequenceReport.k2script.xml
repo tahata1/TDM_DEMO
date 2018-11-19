@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PhpScriptItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>scGetSequenceReport</Name>
+  <Code>if($GLOBALS['debugMode'] == false){
+$LUTName = $GLOBALS['logicalUnit'];
+$TDMDB='TDM';
+$reportsPath = '/usr/local/k2view/k2apps/tdm_reports/';
+$exeId = getGlobalValue('TDM_TASK_EXE_ID'); 
+$fileName = $GLOBALS['logicalUnit'].'_Sequences_Report_EXEID_'.$exeId.'.csv';
+$Path = $reportsPath.$fileName;
+
+//Checking if folder exists and if not creating it
+		if(!is_dir($reportsPath)){
+		  if(!mkdir($reportsPath)){
+			set_error_info("scGetSequenceReport", 'FAILED TO CREATE FOLDER', "Failed to create folder on path:".$Path, E_USER_ERROR, '', array('Folder Path'.$Path));
+			trigger_error($GLOBALS['lastErrorMessage']['errStr'], $GLOBALS['lastErrorMessage']['errNo']);
+		  }
+		}
+$result = "entity_target_id , lu_type, source_env, table_name, column_name, source_id, target_id, is_instance_id"."\r\n";
+$SequencesList = DBSelectAll($TDMDB, 'SELECT entity_target_id , lu_type, source_env, table_name, column_name, source_id, target_id, is_instance_id FROM tdm_seq_mapping where task_execution_id='.$exeId, $param = array());
+reportUserMessage('execID'.$exeId.'count:'.count($SequencesList));
+	if(count($SequencesList) == 0 || $SequencesList == null){
+		set_error_info("scGetSequenceReport", 'There is no sequences', 'No Sequences found', E_USER_ERROR, '', $param = array());
+	    trigger_error($GLOBALS['lastErrorMessage']['errStr'], $GLOBALS['lastErrorMessage']['errNo']);
+		exit;
+	}
+
+foreach ($SequencesList as $seqRow ) {
+	$result .=$seqRow[0].", ".$seqRow[1].", ".$seqRow[2].", ".$seqRow[3].", ".$seqRow[4].", ".$seqRow[5].", ".$seqRow[6].", ".$seqRow[7]."\r\n";
+	
+}
+
+//Save to file
+file_put_contents($Path, $result, FILE_APPEND);
+	
+}</Code>
+  <IsSyntaxValid>true</IsSyntaxValid>
+</PhpScriptItem>
