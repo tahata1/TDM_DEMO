@@ -1,13 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PhpScriptItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Name>scGetSequenceReport</Name>
-  <Code>if($GLOBALS['debugMode'] == false){
-$LUTName = $GLOBALS['logicalUnit'];
-$TDMDB='TDM';
-$reportsPath = '/usr/local/k2view/k2apps/tdm_reports/';
-$exeId = getGlobalValue('TDM_TASK_EXE_ID'); 
-$fileName = $GLOBALS['logicalUnit'].'_Sequences_Report_EXEID_'.$exeId.'.csv';
-$Path = $reportsPath.$fileName;
+  <Code>/*
+This script creates report for each task which displays the sequences that had been replaced
+in the task - that means will display the source&amp;target id 
+*/
+
+if($GLOBALS['debugMode'] == true){
+	$reportsPath = 'C:\K2View\\tdm_reports\\';
+	$taskExeId = 221981 ;	
+	//$taskExeId = 221702;
+	
+}
+else {	
+	$reportsPath = '/usr/local/k2view/k2apps/tdm_reports/';
+	$taskExeId = getGlobalValue('TDM_TASK_EXE_ID');
+}
+
+	$targetEnvName = getGlobalValue('TDM_TAR_ENV_NAME');
+	$srcEnvName = getGlobalValue('TDM_SOURCE_ENVIRONMENT_NAME');
+	$TDMDB='TDM';	
+	$fileName = $GLOBALS['logicalUnit'].'_Sequences_Report_EXEID_'.$taskExeId.'.csv';
+	$Path = $reportsPath.$fileName;
+
 
 //Checking if folder exists and if not creating it
 		if(!is_dir($reportsPath)){
@@ -16,23 +31,31 @@ $Path = $reportsPath.$fileName;
 			trigger_error($GLOBALS['lastErrorMessage']['errStr'], $GLOBALS['lastErrorMessage']['errNo']);
 		  }
 		}
-$result = "entity_target_id , lu_type, source_env, table_name, column_name, source_id, target_id, is_instance_id"."\r\n";
-$SequencesList = DBSelectAll($TDMDB, 'SELECT entity_target_id , lu_type, source_env, table_name, column_name, source_id, target_id, is_instance_id FROM tdm_seq_mapping where task_execution_id='.$exeId, $param = array());
-reportUserMessage('execID'.$exeId.'count:'.count($SequencesList));
+
+$result = '                                                                            '.$GLOBALS['logicalUnit'].' - Source and Target IDs Report'."\r\n";
+$result .= "\r\n";
+$result .= 'Task Execution ID: '.$taskExeId."\r\n";
+$result .= 'Source Environment: '.$srcEnvName."\r\n";
+$result .= 'Target Environment: '.$targetEnvName."\r\n";
+$result .= "\r\n";
+
+//Query which fetch the sequences details from tdm_seq_mapping PG table 
+$SequencesList = DBSelectAll($TDMDB, 'SELECT entity_target_id , table_name, column_name, source_id, target_id, is_instance_id FROM tdm_seq_mapping where task_execution_id='.$taskExeId, $param = array());
+	//if there's no replace sequences occured in this task - create the report and print into it that there is no sequences
 	if(count($SequencesList) == 0 || $SequencesList == null){
-		set_error_info("scGetSequenceReport", 'There is no sequences', 'No Sequences found', E_USER_ERROR, '', $param = array());
-	    trigger_error($GLOBALS['lastErrorMessage']['errStr'], $GLOBALS['lastErrorMessage']['errNo']);
+		$result .= 'The Sequences were not replaced for this task.'."\r\n";
+		file_put_contents($Path, $result, FILE_APPEND);
+		trigger_error($GLOBALS['lastErrorMessage']['errStr'], $GLOBALS['lastErrorMessage']['errNo']);
 		exit;
 	}
 
+$result .= "Target Entity ID,Table Name , Column Name , Source ID , Target ID , Is Instance ID"."\r\n";
 foreach ($SequencesList as $seqRow ) {
-	$result .=$seqRow[0].", ".$seqRow[1].", ".$seqRow[2].", ".$seqRow[3].", ".$seqRow[4].", ".$seqRow[5].", ".$seqRow[6].", ".$seqRow[7]."\r\n";
+	$result .=$seqRow[0].", ".$seqRow[1].", ".$seqRow[2].", ".$seqRow[3].", ".$seqRow[4].", ".$seqRow[5]."\r\n";
 	
 }
 
 //Save to file
-file_put_contents($Path, $result, FILE_APPEND);
-	
-}</Code>
+file_put_contents($Path, $result, FILE_APPEND);</Code>
   <IsSyntaxValid>true</IsSyntaxValid>
 </PhpScriptItem>
