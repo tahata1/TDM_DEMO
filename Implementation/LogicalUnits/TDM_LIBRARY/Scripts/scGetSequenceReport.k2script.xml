@@ -40,7 +40,7 @@ $result .= 'Target Environment: '.$targetEnvName."\r\n";
 $result .= "\r\n";
 
 //Query which fetch the sequences details from tdm_seq_mapping PG table 
-$SequencesList = DBSelectAll($TDMDB, 'SELECT entity_target_id , table_name, column_name, source_id, target_id, is_instance_id FROM tdm_seq_mapping where task_execution_id='.$taskExeId.'order by entity_target_id , is_instance_id desc , table_name , column_name', $param = array());
+$SequencesList = DBSelectAll($TDMDB, 'SELECT entity_target_id , table_name, column_name, source_id, target_id, is_instance_id FROM tdm_seq_mapping where task_execution_id='.$taskExeId.' order by entity_target_id , is_instance_id desc , table_name , column_name', $param = array());
 	//if there's no replace sequences occured in this task - create the report and print into it that there is no sequences
 	if(count($SequencesList) == 0 || $SequencesList == null){
 		$result .= 'The Sequences were not replaced for this task.'."\r\n";
