@@ -18,9 +18,6 @@
       <Value>1</Value>
       <Comment>The version of the product on the target system</Comment>
     </MajorGlobalItem>
-    <MajorGlobalItem category="TDM" type="Product" name="TDM_INSTANCE_SEQ_NAME">
-      <Comment>This global contains the name of DB sequence of the entity id and is used by scGetExecutionStats script if sequences are replaced</Comment>
-    </MajorGlobalItem>
     <MajorGlobalItem category="TDM" type="Product" name="TDM_SET_SYNC_OFF">
       <Value>false</Value>
       <Comment>Indicator to set sync off when getting an entity from Fabric by TDM (default is false)</Comment>
@@ -43,7 +40,7 @@
     <MajorGlobalItem category="TDM" type="Product" name="TDM_SOURCE_ENVIRONMENT_NAME">
       <Comment>this global will be populated by TDM according to the source environment of the task.the ADI sets the active environment in fabric based on this global</Comment>
     </MajorGlobalItem>
-    <MajorGlobalItem category="TDM" type="Constant" name="TDM_SYNTHETIC_DATA">
+    <MajorGlobalItem category="TDM" type="Product" name="TDM_SYNTHETIC_DATA">
       <Value>true</Value>
     </MajorGlobalItem>
     <MajorGlobalItem category="TDM" type="Product" name="TARGET_ENTITY_ID">
