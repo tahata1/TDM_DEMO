@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TableObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>TDM_ROOT_TABLE</Name>
+  <ID>TDM_ROOT_TABLE</ID>
+  <Version>2.6.4.0</Version>
+  <EntityId>tblCol_a62a217a9e624033a0a52b610ff29327</EntityId>
+  <SerializationName />
+  <Columns>
+    <Column name="K2_TDM_EID" id="tblCol_a62a217a9e624033a0a52b610ff29327" index="0" datatype="Text" mandatory="true" ludbProperty="false" serializationName="PATIENT_ID" />
+    <Column name="SOURCE_ENV" id="tblCol_75428296c67d47a68c53ce5f06beb89c" index="1" datatype="Text" ludbProperty="false" serializationName="SSN" />
+    <Column name="IID" id="tblCol_b599b57c5a97443d8dd3b8e007830bbd" index="2" datatype="Text" ludbProperty="false" serializationName="FIRST_NAME" />
+  </Columns>
+  <IndexesList />
+  <EnrichmentList />
+</TableObject>
