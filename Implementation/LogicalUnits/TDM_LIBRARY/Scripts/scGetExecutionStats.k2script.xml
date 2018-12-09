@@ -151,8 +151,17 @@ else {
 			foreach ($luTableList as $tableName) {
 				//Check if to replace table name
 				$targetTableName = getTranslationValues($trnTableName, array(strtolower($tableName[0])) );
-				if($targetTableName[0] != '')$tableName[0] = str_replace('.','_',$targetTableName[0]);
 				
+				// TALI- FIX- REPLACE also @ by _ 
+				if($targetTableName[0] != '')
+				{
+					//reportUserMessage('table name1: '.$tableName[0].', target table name: '.$targetTableName[0]);
+					$tableName[0] = str_replace('.','_',$targetTableName[0]);
+					//reportUserMessage('table name2: '.$tableName[0]);
+					$tableName[0] = str_replace('@','_',$tableName[0]);
+					//reportUserMessage('table name3: '.$tableName[0]);
+				}
+												
 				//Adding achi's prefix to table name
 				$columnName = 't_main_tab_'.$tableName[0];
 				
