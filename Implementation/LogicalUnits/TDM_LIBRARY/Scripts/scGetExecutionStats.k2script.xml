@@ -5,7 +5,6 @@
 $LUTName = $GLOBALS['logicalUnit'];
 $TDMDB = "TDM"; //interface name of Postgres TDMDB (should be TDM)
 
-
 if($statsMode=='Fabric_Only'){ // Report with counts only from Fabric
 	$fileName = $LUTName.'_Stats_Report_Fabric_Only.csv';
 	$Path = 'C:\K2View\\tdm_reports\\'.$fileName;
@@ -80,13 +79,13 @@ else {
 		$srcEnvName = 		getGlobalValue('TDM_SOURCE_ENVIRONMENT_NAME');
 		
 		switch(true) {
-			case ($insert_ind=='true' &amp;&amp; $delete_ind=='false'):
+			case ($insert_ind=='true' && $delete_ind=='false'):
 				  $task_mode='Insert entity without delete';
 				  break;
-			case ($insert_ind=='true' &amp;&amp; $delete_ind=='true'):
+			case ($insert_ind=='true' && $delete_ind=='true'):
 				  $task_mode='Delete and load entity';
 				  break;
-			case ($insert_ind=='false' &amp;&amp; $delete_ind=='true'):
+			case ($insert_ind=='false' && $delete_ind=='true'):
 				  $task_mode='Delete entity without load';
 				  break;		
 		}
@@ -120,7 +119,7 @@ else {
 		DBExecute($k2Proj_interface,"CREATE INDEX IF NOT EXISTS tdm_stats_ix1 ON log_messages1(value1)");
 		//Create index on Stats table only if it exists
 		$stats_tbl_exists= DBSelectValue($k2Proj_interface,"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE  table_schema = 'k2proj".$exeId."' AND table_name = '".$statsTable."')");
-		if ($stats_tbl_exists&lt;&gt;'f')  DBExecute($k2Proj_interface,"CREATE INDEX IF NOT EXISTS tdm_stats_ix2 ON ".$statsTable."(entity_id)");
+		if ($stats_tbl_exists<>'f')  DBExecute($k2Proj_interface,"CREATE INDEX IF NOT EXISTS tdm_stats_ix2 ON ".$statsTable."(entity_id)");
 	
 	//Get Execution popualtion
 	$EntitiesList = DBSelectAll($k2Proj_interface, 'select entity_id from '.$entitiesTable, $param = array());
@@ -136,7 +135,7 @@ else {
 		//Set report Header
 		$result .= "Table Name, Target Count Total, Target Count Actual, Target Count Ignored, Source Count, Diff, Result"."\r\n";
 		
-		if(count($EntitiesList) &lt;= 1000){ //entity list is under 1000 - "where ENTITY_ID in (...)" can be used in the query
+		if(count($EntitiesList) <= 1000){ //entity list is under 1000 - "where ENTITY_ID in (...)" can be used in the query
 			//Setting entity list
 			foreach ($EntitiesList as $entity) {
 				 $entList .=  "'".$entity[0]."',";
@@ -150,18 +149,16 @@ else {
 			
 			foreach ($luTableList as $tableName) {
 				//Check if to replace table name
-				$targetTableName = getTranslationValues($trnTableName, array(strtolower($tableName[0])) );
-				
-				// TALI- FIX- REPLACE also @ by _ 
+				$targetTableName = getTranslationValues($trnTableName, array(strtolower($tableName[0])) );				
+				// replace also . and @ with _ 
 				if($targetTableName[0] != '')
 				{
-					//reportUserMessage('table name1: '.$tableName[0].', target table name: '.$targetTableName[0]);
 					$tableName[0] = str_replace('.','_',$targetTableName[0]);
-					//reportUserMessage('table name2: '.$tableName[0]);
+					//in case interface has checked the "dynamic schema name" option --> then table name has @ that should be removed
 					$tableName[0] = str_replace('@','_',$tableName[0]);
-					//reportUserMessage('table name3: '.$tableName[0]);
 				}
-												
+				//
+				
 				//Adding achi's prefix to table name
 				$columnName = 't_main_tab_'.$tableName[0];
 				
@@ -190,7 +187,7 @@ else {
 																	and tel.TASK_EXECUTION_ID=".$taskExeId." 
 																	and plu.lu_name='".$LUTName."'");
 							     if(is_null($is_parent_lu)) {
-									 //current LU is ROOT LU of the Business Entity --&gt; create entry in Redis so all child LUs will devide their counts with the total number of ROOT LU entities
+									 //current LU is ROOT LU of the Business Entity --> create entry in Redis so all child LUs will devide their counts with the total number of ROOT LU entities
 									 k2_createSharedSeq($taskExeId."@:@"."Clone_ROOT_LU_count",count($EntitiesList));
 									 $root_lu_entities_cnt=count($EntitiesList);
 								 } else {
@@ -209,8 +206,8 @@ else {
 					$rslt = "Mismatch";				
 					}
 				//Add result to File's string
-				  // In case of K2_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report  
-				if ( $tableName[0] &lt;&gt; 'K2_TDM_ROOT' &amp;&amp; $tableName[0] &lt;&gt; 'TDM_LU_TYPE_RELATION_EID' )
+				  // In case of K2_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --> Skip these tables so they won't be part of the report  
+				if ( $tableName[0] <> 'K2_TDM_ROOT' && $tableName[0] <> 'TDM_LU_TYPE_RELATION_EID' )
 					$result .= $tableName[0].", ".$cntTarget.", ".$cntTarget_Actual.", ".$cntIgnored.", ".$tableName[1].", ".$diff.", ".$rslt."\r\n";
 			}
 		}else{ //entity list is more than 1000 - splitting the entities list to chunks to query 1000 entities in each iteration
@@ -225,7 +222,14 @@ else {
 				foreach ($luTableList as $tableName) {
 					//Check if to replace table name
 					$targetTableName = getTranslationValues($trnTableName, array(strtolower($tableName[0])) );
-					if($targetTableName[0] != '')$tableName[0] = str_replace('.','_',$targetTableName[0]);
+					// replace also . and @ with _ 
+					if($targetTableName[0] != '')
+					{
+						$tableName[0] = str_replace('.','_',$targetTableName[0]);
+						//in case interface has checked the "dynamic schema name" option --> then table name has @ that should be removed
+						$tableName[0] = str_replace('@','_',$tableName[0]);
+					}
+					//
 					
 					//Adding achi's prefix to table name
 					$columnName = 't_main_tab_'.$tableName[0];
@@ -262,7 +266,7 @@ else {
 			}
 			
 			
-			foreach ($statsResult as $table =&gt; $tableCount) {
+			foreach ($statsResult as $table => $tableCount) {
 					//Add result to File's string
 					if(!is_numeric($tableCount['TARGET_COUNT']))
 					{
@@ -277,7 +281,7 @@ else {
 																	and tel.TASK_EXECUTION_ID=".$taskExeId." 
 																	and plu.lu_name='".$LUTName."'");
 							     if(is_null($is_parent_lu)) {
-									 //current LU is ROOT LU of the Business Entity --&gt; create entry in Redis so all child LUs will devide their counts with the total number of ROOT LU entities
+									 //current LU is ROOT LU of the Business Entity --> create entry in Redis so all child LUs will devide their counts with the total number of ROOT LU entities
 									 k2_createSharedSeq($taskExeId."@:@"."Clone_ROOT_LU_count",count($EntitiesList));
 									 $root_lu_entities_cnt=count($EntitiesList);
 								 } else {
@@ -292,15 +296,15 @@ else {
 						$rslt = ($diff != 0)? "Mismatch":"OK";
 					}
 				    //prepare the record to be inserted into the report file ($result)
-				    // In case of K2_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report 
-				    if ( $table &lt;&gt; 'K2_TDM_ROOT' &amp;&amp; $table &lt;&gt; 'TDM_LU_TYPE_RELATION_EID' )
+				    // In case of K2_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --> Skip these tables so they won't be part of the report 
+				    if ( $table <> 'K2_TDM_ROOT' && $table <> 'TDM_LU_TYPE_RELATION_EID' )
 						$result .= $table.", ".$tableCount['TARGET_COUNT'].", ".$tableCount['TARGET_COUNT_ACTUAL'].", ".$tableCount['TARGET_COUNT_IGNORED'].", ".$tableCount['SOURCE_COUNT'].", ".$diff.", ".$rslt."\r\n";
 			}
 		}
 		//Save to file
 		//Add note at end of report that target numbers have been normalized due to CLONE task
     	if (getGlobalValue('TDM_SYNTHETIC_DATA') == 'true') {
-	  		$result .= "\r\n\r\n\r\n\r\n*  Report was generated for SYNTHETIC_DATA (CLONE) task --&gt; target counts have been normalized in order to compare to single entity source counts.\r\n** In case entire clone task has been completed successfully - counts should show OK match.\r\n   in case of failure in one of the cloned entities - this report will show Mismatch";
+	  		$result .= "\r\n\r\n\r\n\r\n*  Report was generated for SYNTHETIC_DATA (CLONE) task --> target counts have been normalized in order to compare to single entity source counts.\r\n** In case entire clone task has been completed successfully - counts should show OK match.\r\n   in case of failure in one of the cloned entities - this report will show Mismatch";
 		}
 		file_put_contents($Path, $result, FILE_APPEND);
 		
@@ -315,7 +319,14 @@ else {
 				foreach ($luTableList as $tableName) {	
 					//Check if to replace table name
 					$targetTableName = getTranslationValues($trnTableName, array(strtolower($tableName[0])) );
-					if($targetTableName[0] != '')$tableName[0] = str_replace('.','_',$targetTableName[0]);
+					// replace also . and @ with _ 
+					if($targetTableName[0] != '')
+					{
+						$tableName[0] = str_replace('.','_',$targetTableName[0]);
+						//in case interface has checked the "dynamic schema name" option --> then table name has @ that should be removed
+						$tableName[0] = str_replace('@','_',$tableName[0]);
+					}
+					//
 					
 					//Adding achi's prefix to table name
 					$columnName = 't_main_tab_'.$tableName[0];
@@ -340,7 +351,7 @@ else {
 						$cntTarget = 'Table is not part of flow or Statistics is set to false in map';				
 						}
 					//Add result to File's string only if source and taget dont macth
-					if(is_numeric($cntTarget) &amp;&amp; ($cntTarget - $tableName[1]) != 0 ){
+					if(is_numeric($cntTarget) && ($cntTarget - $tableName[1]) != 0 ){
   					  //In case of Synthetic Data (Clone task): devide the number of target records in total number of cloned entities in order to get normalized counts in comparison to source counts
   				  	if (getGlobalValue('TDM_SYNTHETIC_DATA') == 'true') {
 							    //Check if current LU is the ROOT LU of the Business Entity 
@@ -349,7 +360,7 @@ else {
 																	and tel.TASK_EXECUTION_ID=".$taskExeId." 
 																	and plu.lu_name='".$LUTName."'");
 							     if(is_null($is_parent_lu)) {
-									 //current LU is ROOT LU of the Business Entity --&gt; create entry in Redis so all child LUs will devide their counts with the total number of ROOT LU entities
+									 //current LU is ROOT LU of the Business Entity --> create entry in Redis so all child LUs will devide their counts with the total number of ROOT LU entities
 									 k2_createSharedSeq($taskExeId."@:@"."Clone_ROOT_LU_count",count($EntitiesList));
 									 $root_lu_entities_cnt=count($EntitiesList);
 								 } else {
@@ -362,13 +373,14 @@ else {
 						$diff = $cntTarget - $tableName[1];
 						$rslt = ($diff != 0)? "Mismatch":"OK";
 						
-						// In case of K2_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report 
-				    		if ( $tableName[0] &lt;&gt; 'K2_TDM_ROOT' &amp;&amp; $tableName[0] &lt;&gt; 'TDM_LU_TYPE_RELATION_EID' )
+						// In case of K2_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --> Skip these tables so they won't be part of the report 
+				    		if ( $tableName[0] <> 'K2_TDM_ROOT' && $tableName[0] <> 'TDM_LU_TYPE_RELATION_EID' )
 								$result .= $entity[0].', '.$tableName[0].", ".$cntTarget.", ".$cntTarget_Actual.", ".$cntIgnored.", ".$tableName[1].", ".$diff.", ".$rslt."\r\n";
 					}
 				}
 		
 			}
+
 		//Save to file
 		//Add note at end of report that target numbers have been normalized due to CLONE task
     	if (getGlobalValue('TDM_SYNTHETIC_DATA') == 'true') {
