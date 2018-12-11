@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.6.4.0">
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.6.4.5">
   <Name>fnPop_TDM_ROOT_TABLE</Name>
   <ID>Root.fnPop_TDM_ROOT_TABLE</ID>
   <Category>Root</Category>
@@ -11,7 +11,7 @@
   <ApiFunction>false</ApiFunction>
   <DecisionFunction>false</DecisionFunction>
   <RequiresLuReference>false</RequiresLuReference>
-  <Desc />
+  <Desc>Fix- support _dev_ environment. _dev_ is supported for debug only. for </Desc>
   <Language>PHP</Language>
   <FunctionBody>
 $entity_id=getEntityID();
@@ -20,6 +20,12 @@ $k2_tdm_entity=explode('_',$entity_id);
 
 $env=$k2_tdm_entity[0];
 $iid=$k2_tdm_entity[1];
+
+//support default environment
+if (substr($entity_id,0,4)=='_dev') {
+	$env='_dev';
+	$iid=$k2_tdm_entity[2];
+}
 
 yield array ($entity_id,$env,$iid);</FunctionBody>
   <IsSyntaxValid>true</IsSyntaxValid>
