@@ -20,6 +20,12 @@ $k2_tdm_entity=explode('_',$entity_id);
 
 $env=$k2_tdm_entity[0];
 $iid=$k2_tdm_entity[1];
+    
+//support default environment
+if (substr($entity_id,0,4)=='_dev') {
+	$env='_dev';
+	$iid=$k2_tdm_entity[2];
+}
 
 yield array ($entity_id,$env,$iid);</FunctionBody>
   <IsSyntaxValid>true</IsSyntaxValid>
