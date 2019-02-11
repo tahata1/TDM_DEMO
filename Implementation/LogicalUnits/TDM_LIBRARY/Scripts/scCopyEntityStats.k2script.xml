@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PhpScriptItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Name>scCopyEntityStats</Name>
-  <Code>$exeId = k2_getExecutionId();
+  <Code>
+$exeId = k2_getExecutionId();
 $taskExecutionID = getGlobalValue("TDM_TASK_EXE_ID"); 
 $environmentID = getGlobalValue("TDM_TAR_ENV_NAME");
 $eiTable = getEntityInclusionTableName();
@@ -11,19 +12,18 @@ foreach (loopThroughDBSqlResult('k2Proj', 'SELECT entity_sequence, entity_id, en
              $entityRow['execution_status'] = 'stopped';
     }
 	
-	//get target_entity_id value :
-	//in case of sequences replacement - get the value from TDM_SEQ_MAPPING
-	//in case no sequences replacement - use the original source value
+	//get target_entity_id value
 	$entityID_no_env=explode("_",$entityRow['entity_id'])[1];	
 	$target_entity_id= DBSelectValue('TDM',"select entity_target_id from TDM_SEQ_MAPPING where task_execution_id=".$taskExecutionID." and lu_type='".$GLOBALS['logicalUnit']."' and is_instance_id='Y' and source_id='".$entityID_no_env."' and entity_sequence=".$entityRow['entity_sequence']);
 	if (is_null($target_entity_id) || empty($target_entity_id)) {
 		//populate target_entity_id with original source value - without the concatenated environment
-		$target_entity_id = $entityID_no_env;
+		$target_entity_id = substr($entityRow['entity_id'] , strpos($entityRow['entity_id'],'_')+1 );
 	}
 	//
 	
     $params = array($taskExecutionID, $GLOBALS['logicalUnit'], $entityRow['entity_id'], $target_entity_id, $exeId, date('Y-m-d H:i:s'), $entityRow['entity_end_timestamp'], $entityRow['entity_start_timestamp'], $environmentID, $entityRow['execution_status'], 'ENTITY');
     DBExecute('TDM', "INSERT INTO TASK_EXECUTION_ENTITIES (task_execution_id, lu_name, entity_id, target_entity_id, etl_execution_id, creation_date, entity_end_time, entity_start_time, env_id, execution_status, id_type) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)", $params);
-}</Code>
+}
+</Code>
   <IsSyntaxValid>true</IsSyntaxValid>
 </PhpScriptItem>

@@ -2,48 +2,54 @@
 <MajorGlobal xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Name>Globals</Name>
   <ItemsList>
-    <MajorGlobalItem category="TDM" type="Product" name="TDM_REFRESH_REFERENCE_DATA">
-      <Value>false</Value>
-      <Comment>This global is used to determine if to refresh the Logical Unit's reference data before the data migration</Comment>
-    </MajorGlobalItem>
     <MajorGlobalItem category="TDM" type="Product" name="TDM_REQUEST_OF_FRESH_DATA">
       <Value>false</Value>
       <Comment>This global is used to determine if force the synchronization of the entities in the Test Data Warehouse (TDW)</Comment>
     </MajorGlobalItem>
     <MajorGlobalItem category="TDM" type="Product" name="TDM_DELETE_BEFORE_LOAD">
-      <Value>false</Value>
+      <Value>true</Value>
       <Comment>This global is used to determine if to delete the entities being migrated from the target database</Comment>
     </MajorGlobalItem>
     <MajorGlobalItem category="TDM" type="Product" name="TDM_REPLACE_SEQUENCES">
-      <Value>false</Value>
+      <Value>true</Value>
       <Comment>This global is used to determine if replace the table's keys with new sequences to prevent duplication failure as part of the migration process</Comment>
     </MajorGlobalItem>
     <MajorGlobalItem category="TDM" type="Product" name="TDM_TARGET_PRODUCT_VERSION">
       <Value>1</Value>
       <Comment>The version of the product on the target system</Comment>
     </MajorGlobalItem>
-    <MajorGlobalItem category="TDM" type="Product" name="TDM_INSTANCE_SEQ_NAME">
-      <Comment>This global contains the name of DB sequence of the entity id and is used by scGetExecutionStats script if sequences are replaced</Comment>
-    </MajorGlobalItem>
     <MajorGlobalItem category="TDM" type="Product" name="TDM_SET_SYNC_OFF">
       <Value>false</Value>
       <Comment>Indicator to set sync off when getting an entity from Fabric by TDM (default is false)</Comment>
     </MajorGlobalItem>
-    <MajorGlobalItem type="Constant" name="STATS_REPORT_MODE">
+    <MajorGlobalItem category="TDM" type="Constant" name="STATS_REPORT_MODE">
       <Comment>used in scGetExecutionStats. valid values : Fabric_Only or anything else</Comment>
     </MajorGlobalItem>
-    <MajorGlobalItem type="Constant" name="TDM_TASK_EXE_ID">
+    <MajorGlobalItem category="TDM" type="Product" name="TDM_TASK_EXE_ID">
+      <Value>1</Value>
       <Comment>leave value empty. in case of TDM : value will get popualted by TDM GUI</Comment>
     </MajorGlobalItem>
-    <MajorGlobalItem type="Constant" name="TDM_TAR_ENV_NAME">
+    <MajorGlobalItem category="TDM" type="Product" name="TDM_TAR_ENV_NAME">
+      <Value>a</Value>
       <Comment>leave value empty. in case of TDM : value will get popualted by TDM GUI</Comment>
     </MajorGlobalItem>
-    <MajorGlobalItem type="Constant" name="TDM_INSERT_TO_TARGET">
-      <Value>true</Value>
+    <MajorGlobalItem category="TDM" type="Product" name="TDM_INSERT_TO_TARGET">
+      <Value>false</Value>
       <Comment>this global will be set to false only in case of DELETE ONLY option for TDM task</Comment>
     </MajorGlobalItem>
-    <MajorGlobalItem type="Constant" name="TDM_SOURCE_ENVIRONMENT_NAME">
+    <MajorGlobalItem category="TDM" type="Product" name="TDM_SOURCE_ENVIRONMENT_NAME">
       <Comment>this global will be populated by TDM according to the source environment of the task.the ADI sets the active environment in fabric based on this global</Comment>
+    </MajorGlobalItem>
+    <MajorGlobalItem category="TDM" type="Product" name="TDM_SYNTHETIC_DATA">
+      <Value>true</Value>
+    </MajorGlobalItem>
+    <MajorGlobalItem category="TDM" type="Product" name="TARGET_ENTITY_ID">
+      <Value />
+      <Comment>Target entity id. This global is used by the population of the target_entity_id field of the Stats table.</Comment>
+    </MajorGlobalItem>
+    <MajorGlobalItem category="TDM" type="Product" name="TDM_REFRESH_REFERENCE_DATA">
+      <Value>false</Value>
+      <Comment>This global is used to determine if to refresh the Logical Unit's reference data before the data migration</Comment>
     </MajorGlobalItem>
   </ItemsList>
 </MajorGlobal>

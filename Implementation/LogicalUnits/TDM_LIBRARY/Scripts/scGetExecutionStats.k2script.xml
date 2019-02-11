@@ -30,7 +30,7 @@ else {
 		//  4)set $k2Proj_interface to your newly created PG interface name
 		$exeId = 1283;
 		$depId[2] = 2566;
-		$k2Proj_interface='PG_2';
+		$k2Proj_interface='proj11';
 		//
 		
 		$fileName = $GLOBALS['logicalUnit'].'_Stats_Report_EXEID_'.$exeId.'.csv';
@@ -207,8 +207,8 @@ else {
 					$rslt = "Mismatch";				
 					}
 				//Add result to File's string
-				  // In case of FABRIC_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report  
-				if ( $tableName[0] &lt;&gt; 'FABRIC_TDM_ROOT' &amp;&amp; $tableName[0] &lt;&gt; 'TDM_LU_TYPE_RELATION_EID' )
+				  // In case of K2_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report  
+				if ( $tableName[0] &lt;&gt; 'K2_TDM_ROOT' &amp;&amp; $tableName[0] &lt;&gt; 'TDM_LU_TYPE_RELATION_EID' )
 					$result .= $tableName[0].", ".$cntTarget.", ".$cntTarget_Actual.", ".$cntIgnored.", ".$tableName[1].", ".$diff.", ".$rslt."\r\n";
 			}
 		}else{ //entity list is more than 1000 - splitting the entities list to chunks to query 1000 entities in each iteration
@@ -297,8 +297,8 @@ else {
 						$rslt = ($diff != 0)? "Mismatch":"OK";
 					}
 				    //prepare the record to be inserted into the report file ($result)
-				    // In case of FABRIC_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report 
-				    if ( $table &lt;&gt; 'FABRIC_TDM_ROOT' &amp;&amp; $table &lt;&gt; 'TDM_LU_TYPE_RELATION_EID' )
+				    // In case of K2_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report 
+				    if ( $table &lt;&gt; 'K2_TDM_ROOT' &amp;&amp; $table &lt;&gt; 'TDM_LU_TYPE_RELATION_EID' )
 						$result .= $table.", ".$tableCount['TARGET_COUNT'].", ".$tableCount['TARGET_COUNT_ACTUAL'].", ".$tableCount['TARGET_COUNT_IGNORED'].", ".$tableCount['SOURCE_COUNT'].", ".$diff.", ".$rslt."\r\n";
 			}
 		}
@@ -374,8 +374,8 @@ else {
 						$diff = $cntTarget - $tableName[1];
 						$rslt = ($diff != 0)? "Mismatch":"OK";
 						
-						// In case of FABRIC_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report 
-				    		if ( $tableName[0] &lt;&gt; 'FABRIC_TDM_ROOT' &amp;&amp; $tableName[0] &lt;&gt; 'TDM_LU_TYPE_RELATION_EID' )
+						// In case of K2_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report 
+				    		if ( $tableName[0] &lt;&gt; 'K2_TDM_ROOT' &amp;&amp; $tableName[0] &lt;&gt; 'TDM_LU_TYPE_RELATION_EID' )
 								$result .= $entity[0].', '.$tableName[0].", ".$cntTarget.", ".$cntTarget_Actual.", ".$cntIgnored.", ".$tableName[1].", ".$diff.", ".$rslt."\r\n";
 					}
 				}

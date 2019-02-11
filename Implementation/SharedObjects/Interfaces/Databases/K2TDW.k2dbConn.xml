@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<DBConn xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DBConnFabric" name="K2TDW" type="Fabric" version="2.6.4.0">
+<DBConn xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:type="DBConnFabric" name="K2TDW" type="Fabric" version="2.6.4.5">
   <Active>true</Active>
   <DataSource>10.21.2.69</DataSource>
   <PortNum>9042</PortNum>
-  <DataBase>PATIENT_VISITS,PATIENT_LU,PATIENT_INVOICES,VISIT_LAB_RESULTS</DataBase>
+  <DataBase>PATIENT_LU,VISITS_PATIENT_LEVEL</DataBase>
   <UserId>test_odbc_admin_user</UserId>
   <Password>SZA6jU4yGpyEOKYouOrEu+rZ/P8noIrShYLgZOrqmwQ=:xi04bvsphzt0F1C/zAl/unr+OkmFxHal5fz/zFisTeQ=</Password>
-  <ConnectionStringClient>DRIVER={DataStax Cassandra ODBC Driver};Host=10.21.2.69;Port=9042;AuthMech=1;UID=test_odbc_admin_user;PWD=[PASSWORD];DefaultKeyspace=PATIENT_VISITS,PATIENT_LU,PATIENT_INVOICES,VISIT_LAB_RESULTS;QueryMode=1;</ConnectionStringClient>
-  <ConnectionStringServerSide>Driver={DataStax Cassandra ODBC Driver};Host=10.21.2.69;Port=9042;AuthMech=1;DefaultKeyspace=PATIENT_VISITS,PATIENT_LU,PATIENT_INVOICES,VISIT_LAB_RESULTS;QueryMode=2;WhitelistFilteringHosts=10.21.2.69</ConnectionStringServerSide>
-  <SchemaFilter>k2_ref,PATIENT_VISITS,PATIENT_LU,PATIENT_INVOICES,VISIT_LAB_RESULTS</SchemaFilter>
+  <ConnectionStringClient>DRIVER={DataStax Cassandra ODBC Driver};Host=10.21.2.69;Port=9042;AuthMech=1;UID=test_odbc_admin_user;PWD=[PASSWORD];DefaultKeyspace=PATIENT_LU,VISITS_PATIENT_LEVEL;QueryMode=1;</ConnectionStringClient>
+  <ConnectionStringServerSide>Driver={DataStax Cassandra ODBC Driver};Host=10.21.2.69;Port=9042;AuthMech=1;DefaultKeyspace=PATIENT_LU,VISITS_PATIENT_LEVEL;QueryMode=2;WhitelistFilteringHosts=10.21.2.69</ConnectionStringServerSide>
+  <SchemaFilter>k2_ref,PATIENT_LU,VISITS_PATIENT_LEVEL</SchemaFilter>
   <UseSelectAsteriskInAutoCreatedQueries>true</UseSelectAsteriskInAutoCreatedQueries>
   <AutomaticMetadataLoading>false</AutomaticMetadataLoading>
   <OfflineMode>true</OfflineMode>
