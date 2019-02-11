@@ -22,15 +22,15 @@ else {
 	// Set param
 	$reportsPath = '/usr/local/k2view/k2apps/tdm_reports/';
 	if($GLOBALS['debugMode'] == true){
-		//  Note : since script is running on Debug, please dollow next steps :
+		//  Note : since script is running on Debug, please follow next steps :
 		//  1)set $exeId to the execution ID of your run
 		//  2)set $depId[2] to the deployment ID of your run
 		//  3)create a Postgres interface same as k2Proj but set user and password according to execution ID
 		//    example : PG interface called 'PG_2' , ip=172.31.27.173, port=5432, database=k2view, User=k2proj45, Password=k2proj45
 		//  4)set $k2Proj_interface to your newly created PG interface name
-		$exeId = 15;
-		$depId[2] = 30;
-		$k2Proj_interface='proj11';
+		$exeId = 1283;
+		$depId[2] = 2566;
+		$k2Proj_interface='PG_2';
 		//
 		
 		$fileName = $GLOBALS['logicalUnit'].'_Stats_Report_EXEID_'.$exeId.'.csv';
@@ -52,30 +52,64 @@ else {
 			trigger_error($GLOBALS['lastErrorMessage']['errStr'], $GLOBALS['lastErrorMessage']['errNo']);
 		  }
 		}
-		$k2Proj_interface='k2Proj'; // Note: do not change this k2Proj value since we are NOT in debug mode
+		$k2Proj_interface = 'k2Proj'; // Note: do not change this k2Proj value since we are NOT in debug mode
 		$exeId = k2_getExecutionId();
 		$depId = k2_getProcessExecutionInfo();
 		$fileName = $GLOBALS['logicalUnit'].'_Stats_Report_EXEID_'.$exeId.'.csv';
 		$Path = $reportsPath.$fileName;
 	}
+
 	
-	// Replace Sequences Addition
-	$tdmReplaceSeq = getGlobalValue('TDM_REPLACE_SEQUENCES');
-	if($tdmReplaceSeq != 'false' || $tdmReplaceSeq != 'true'){
-		set_error_info("scGetExecutionStats", 'FAILED TO SET TDM_REPLACE_SEQUENCES Global', "TDM_REPLACE_SEQUENCES Global is not set currectly, please check", '', array('TDM_REPLACE_SEQUENCES Value'.$tdmReplaceSeq));
-		trigger_error($GLOBALS['lastErrorMessage']['errStr'], $GLOBALS['lastErrorMessage']['errNo']);
-	}else{
-		if($tdmReplaceSeq &amp;&amp; getGlobalValue('TDM_INSTANCE_SEQ_NAME') != null){
-			$instanceSeqName = getGlobalValue('TDM_INSTANCE_SEQ_NAME');
-			$sequencesTransTable =  'public.TDM_SEQ_MAPPING';
-			$getNewInsVale = true;
-		}else{
-			$getNewInsVale = false;
+	
+	//Build report title
+	$result  = "                                                                       *****************************************************************************\r\n";
+	$result .= "                                                                            ".$GLOBALS['logicalUnit']." - Statistics Report"."\r\n";
+	$result .= "                                                                       *****************************************************************************\r\n\r\n";
+	
+	// If execution took place as part of TDM GUI Task - Add header to report with Task information
+	$taskExeId = getGlobalValue('TDM_TASK_EXE_ID');
+	if (!is_null($taskExeId) || !empty($taskExeId)) { 
+
+		$fresh_data_ind = 	getGlobalValue('TDM_REQUEST_OF_FRESH_DATA');
+		$delete_ind = 		getGlobalValue('TDM_DELETE_BEFORE_LOAD');
+		$insert_ind =		 getGlobalValue('TDM_INSERT_TO_TARGET');
+		$replace_seq_ind =    getGlobalValue('TDM_REPLACE_SEQUENCES');
+		$sync_off_ind = 	  getGlobalValue('TDM_SET_SYNC_OFF');
+		$clone_ind = 		 getGlobalValue('TDM_SYNTHETIC_DATA');
+		$targetEnvName = 	 getGlobalValue('TDM_TAR_ENV_NAME');
+		$srcEnvName = 		getGlobalValue('TDM_SOURCE_ENVIRONMENT_NAME');
+		
+		switch(true) {
+			case ($insert_ind=='true' &amp;&amp; $delete_ind=='false'):
+				  $task_mode='Insert entity without delete';
+				  break;
+			case ($insert_ind=='true' &amp;&amp; $delete_ind=='true'):
+				  $task_mode='Delete and load entity';
+				  break;
+			case ($insert_ind=='false' &amp;&amp; $delete_ind=='true'):
+				  $task_mode='Delete entity without load';
+				  break;		
 		}
+
+		if ($clone_ind=='true') { //in clone mode 
+			$replace_seq_ind = 'true';
+			$task_mode = 'Synthetic entities';
+		}
+	
+	
+		//Set report title
+		$result .= "\r\n";
+		$result .= 'Task Execution ID: '.$taskExeId."\r\n";
+		$result .= 'ADI Execution ID: '.$exeId."\r\n";
+		$result .= 'Source Environment: '.$srcEnvName."\r\n";
+		$result .= 'Target Environment: '.$targetEnvName."\r\n";
+		$result .= "Task Properties:\r\n";
+		$result .= '                Request_Up_To_Date_Entity =   '.$fresh_data_ind."\r\n";
+		$result .= '                Operation_Mode =              '.$task_mode."\r\n";
+		$result .= '                Replace_Sequences =           '.$replace_seq_ind."\r\n";
+		$result .= '                TDM_set_sync_off =            '.$sync_off_ind."\r\n\r\n\r\n\r\n";
+
 	}
-	
-	
-	
 	
 	$entityLevel = 'N';
 	$trnTableName = 'trnTableNames';//In case not all table names are equale between fabric and target
@@ -83,8 +117,10 @@ else {
 	$statsTable =  'k2proj'.$exeId.'.stats_'.$exeId.'_'.$depId[2];
 	
 	//Creation of indexes for performance
-	DBExecute($k2Proj_interface,"CREATE INDEX tdm_stats_ix1 ON log_messages1(value1)");
-	DBExecute($k2Proj_interface,"CREATE index tdm_stats_ix2 ON ".$statsTable."(entity_id)");
+		DBExecute($k2Proj_interface,"CREATE INDEX IF NOT EXISTS tdm_stats_ix1 ON log_messages1(value1)");
+		//Create index on Stats table only if it exists
+		$stats_tbl_exists= DBSelectValue($k2Proj_interface,"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE  table_schema = 'k2proj".$exeId."' AND table_name = '".$statsTable."')");
+		if ($stats_tbl_exists&lt;&gt;'f')  DBExecute($k2Proj_interface,"CREATE INDEX IF NOT EXISTS tdm_stats_ix2 ON ".$statsTable."(entity_id)");
 	
 	//Get Execution popualtion
 	$EntitiesList = DBSelectAll($k2Proj_interface, 'select entity_id from '.$entitiesTable, $param = array());
@@ -98,19 +134,7 @@ else {
 	// Check if to execute per Entity
 	if($entityLevel == 'N'){
 		//Set report Header
-		$result = "Table Name, Target Count Total, Target Count Actual, Target Count Ignored, Source Count, Diff, Result"."\r\n";
-		
-		//check if TDM sequnece is on. if so, check if instance seq name has been provided. if so, get the new instance value
-		if($getNewInsVale){
-			$newSeqEntitiesList = DBSelectAll($k2Proj_interface, 'select new_value from '.$sequencesTransTable.' where sequence_name = $1 and old_value in ('.$entList.')', $param = array($instanceSeqName)); //GILAD
-			foreach ($newSeqEntitiesList as $entityNewSeq) {
-				$newEntList .=  "'".$entityNewSeq[0]."',";
-			}
-			$targetEntList = rtrim($newEntList,',');
-			$targetInstanceList = $targetEntList;
-		}else{
-			$targetInstanceList = $entList;
-		}
+		$result .= "Table Name, Target Count Total, Target Count Actual, Target Count Ignored, Source Count, Diff, Result"."\r\n";
 		
 		if(count($EntitiesList) &lt;= 1000){ //entity list is under 1000 - "where ENTITY_ID in (...)" can be used in the query
 			//Setting entity list
@@ -118,16 +142,23 @@ else {
 				 $entList .=  "'".$entity[0]."',";
 			}
 			$entList = rtrim($entList,',');	
-			
+
 			$targetInstanceList = $entList;
 			
-			//Getting table count from Fabric	
+			//Getting table count from Fabric
 			$luTableList = DBSelectAll($TDMDB, 'select TABLE_NAME, sum(TABLE_COUNT) from INSTANCE_TABLE_COUNT where LU_NAME = $1 and EI in ('.$entList.') group by TABLE_NAME',SQL_FETCH_MODE_BOTH ,$param = array($LUTName));
 			
 			foreach ($luTableList as $tableName) {
 				//Check if to replace table name
-				$targetTableName = getTranslationValues($trnTableName, array(strtolower($tableName[0])) );
-				if($targetTableName[0] != '')$tableName[0] = str_replace('.','_',$targetTableName[0]);
+				$targetTableName = getTranslationValues($trnTableName, array(strtolower($tableName[0])) );				
+				// replace also . and @ with _ 
+				if($targetTableName[0] != '')
+				{
+					$tableName[0] = str_replace('.','_',$targetTableName[0]);
+					//in case interface has checked the "dynamic schema name" option --&gt; then table name has @ that should be removed
+					$tableName[0] = str_replace('@','_',$tableName[0]);
+				}
+				//
 				
 				//Adding achi's prefix to table name
 				$columnName = 't_main_tab_'.$tableName[0];
@@ -149,15 +180,36 @@ else {
 					//Updating $cntTarget to hold the actual counts from COMPLETED entities + counts from 'DB_ERROR_IGNORED' records 
 					$cntTarget = $cntTarget+$cntIgnored;
 					
+						//In case of Synthetic Data (Clone task): devide the number of target records in total number of cloned entities (num of entities of ROOT LU of the Business entity) in order to get normalized counts in comparison to source counts
+					  	if (getGlobalValue('TDM_SYNTHETIC_DATA') == 'true') {
+							    //Check if current LU is the ROOT LU of the Business Entity 
+								$is_parent_lu=DBSelectValue($TDMDB,"select PARENT_LU_ID from TASK_EXECUTION_LIST as tel , PRODUCT_LOGICAL_UNITS as plu 
+																	where tel.lu_id = plu.lu_id
+																	and tel.TASK_EXECUTION_ID=".$taskExeId." 
+																	and plu.lu_name='".$LUTName."'");
+							     if(is_null($is_parent_lu)) {
+									 //current LU is ROOT LU of the Business Entity --&gt; create entry in Redis so all child LUs will devide their counts with the total number of ROOT LU entities
+									 k2_createSharedSeq($taskExeId."@:@"."Clone_ROOT_LU_count",count($EntitiesList));
+									 $root_lu_entities_cnt=count($EntitiesList);
+								 } else {
+							  	    $root_lu_entities_cnt = k2_getSharedSeqValue($taskExeId."@:@"."Clone_ROOT_LU_count");
+								 }
+							  
+							  $cntTarget = $cntTarget / $root_lu_entities_cnt ;
+						  }
+						  //
+					
 					$diff = $cntTarget - $tableName[1];
-					$rslt = ($diff != 0)? "Not Good":"Good";			
+					$rslt = ($diff != 0)? "Mismatch":"OK";			
 				}else{
 					$cntTarget = 'Table is not part of flow or Statistics is set to false in map';
 					$diff = 0;
-					$rslt = "Not Good";				
+					$rslt = "Mismatch";				
 					}
 				//Add result to File's string
-				$result .= $tableName[0].", ".$cntTarget.", ".$cntTarget_Actual.", ".$cntIgnored.", ".$tableName[1].", ".$diff.", ".$rslt."\r\n";
+				  // In case of FABRIC_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report  
+				if ( $tableName[0] &lt;&gt; 'FABRIC_TDM_ROOT' &amp;&amp; $tableName[0] &lt;&gt; 'TDM_LU_TYPE_RELATION_EID' )
+					$result .= $tableName[0].", ".$cntTarget.", ".$cntTarget_Actual.", ".$cntIgnored.", ".$tableName[1].", ".$diff.", ".$rslt."\r\n";
 			}
 		}else{ //entity list is more than 1000 - splitting the entities list to chunks to query 1000 entities in each iteration
 			foreach ($EntitiesList as $entity) {
@@ -165,25 +217,20 @@ else {
 			$entityCount++;	
 			if($entityCount%1000 == 0 || $entityCount == count($EntitiesList)){
 				$entList = rtrim($entList,',');
-				
-				//check if TDM sequnece is on. if so, check if instance seq name has been provided. if so, get the new instance values
-				if($getNewInsVale){
-					$newSeqEntitiesList = DBSelectAll($k2Proj_interface, 'select new_value from '.$sequencesTransTable.' where sequence_name = $1 and old_value in ('.$entList.')', $param = array($instanceSeqName));//GILAD
-					foreach ($newSeqEntitiesList as $entityNewSeq) {
-						$newEntList .=  "'".$entityNewSeq[0]."',";
-					}
-					$targetEntList = rtrim($newEntList,',');
-					$targetInstanceList = $targetEntList;
-				}else{
-					$targetInstanceList = $entList;
-				}
-					
+									
 				$luTableList = DBSelectAll($TDMDB, 'select TABLE_NAME, sum(TABLE_COUNT) from INSTANCE_TABLE_COUNT where LU_NAME = $1 and EI in ('.$entList.') group by TABLE_NAME',SQL_FETCH_MODE_BOTH ,$param = array($LUTName));
 				
 				foreach ($luTableList as $tableName) {
 					//Check if to replace table name
 					$targetTableName = getTranslationValues($trnTableName, array(strtolower($tableName[0])) );
-					if($targetTableName[0] != '')$tableName[0] = str_replace('.','_',$targetTableName[0]);
+					// replace also . and @ with _ 
+					if($targetTableName[0] != '')
+					{
+						$tableName[0] = str_replace('.','_',$targetTableName[0]);
+						//in case interface has checked the "dynamic schema name" option --&gt; then table name has @ that should be removed
+						$tableName[0] = str_replace('@','_',$tableName[0]);
+					}
+					//
 					
 					//Adding achi's prefix to table name
 					$columnName = 't_main_tab_'.$tableName[0];
@@ -225,37 +272,62 @@ else {
 					if(!is_numeric($tableCount['TARGET_COUNT']))
 					{
 						$diff = 0;
-						$rslt = "Not Good";
+						$rslt = "Mismatch";
 					}else{
+						  //In case of Synthetic Data (Clone task): devide the number of target records in total number of cloned entities in order to get normalized counts in comparison to source counts
+					  	if (getGlobalValue('TDM_SYNTHETIC_DATA') == 'true') {
+							    //Check if current LU is the ROOT LU of the Business Entity 
+								$is_parent_lu=DBSelectValue($TDMDB,"select PARENT_LU_ID from TASK_EXECUTION_LIST as tel , PRODUCT_LOGICAL_UNITS as plu 
+																	where tel.lu_id = plu.lu_id
+																	and tel.TASK_EXECUTION_ID=".$taskExeId." 
+																	and plu.lu_name='".$LUTName."'");
+							     if(is_null($is_parent_lu)) {
+									 //current LU is ROOT LU of the Business Entity --&gt; create entry in Redis so all child LUs will devide their counts with the total number of ROOT LU entities
+									 k2_createSharedSeq($taskExeId."@:@"."Clone_ROOT_LU_count",count($EntitiesList));
+									 $root_lu_entities_cnt=count($EntitiesList);
+								 } else {
+							  	    $root_lu_entities_cnt = k2_getSharedSeqValue($taskExeId."@:@"."Clone_ROOT_LU_count");
+								 }
+							  
+							  $tableCount['TARGET_COUNT'] = $tableCount['TARGET_COUNT'] / $root_lu_entities_cnt;
+						  }
+						  //
+					
 						$diff = $tableCount['TARGET_COUNT'] - $tableCount['SOURCE_COUNT'];
-						$rslt = ($diff != 0)? "Not Good":"Good";
+						$rslt = ($diff != 0)? "Mismatch":"OK";
 					}
-					$result .= $table.", ".$tableCount['TARGET_COUNT'].", ".$tableCount['TARGET_COUNT_ACTUAL'].", ".$tableCount['TARGET_COUNT_IGNORED'].", ".$tableCount['SOURCE_COUNT'].", ".$diff.", ".$rslt."\r\n";
+				    //prepare the record to be inserted into the report file ($result)
+				    // In case of FABRIC_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report 
+				    if ( $table &lt;&gt; 'FABRIC_TDM_ROOT' &amp;&amp; $table &lt;&gt; 'TDM_LU_TYPE_RELATION_EID' )
+						$result .= $table.", ".$tableCount['TARGET_COUNT'].", ".$tableCount['TARGET_COUNT_ACTUAL'].", ".$tableCount['TARGET_COUNT_IGNORED'].", ".$tableCount['SOURCE_COUNT'].", ".$diff.", ".$rslt."\r\n";
 			}
 		}
 		//Save to file
+		//Add note at end of report that target numbers have been normalized due to CLONE task
+    	if (getGlobalValue('TDM_SYNTHETIC_DATA') == 'true') {
+	  		$result .= "\r\n\r\n\r\n\r\n*  Report was generated for SYNTHETIC_DATA (CLONE) task --&gt; target counts have been normalized in order to compare to single entity source counts.\r\n** In case entire clone task has been completed successfully - counts should show OK match.\r\n   in case of failure in one of the cloned entities - this report will show Mismatch";
+		}
 		file_put_contents($Path, $result, FILE_APPEND);
 		
 	}else{ //Execute per Entity
 		//Set report Header
-		$result = "Entity ID, Table Name, Target Count Total, Target Count Actual, Target Count Ignored, Source Count, Diff, Result"."\r\n";
+		$result .= "Entity ID, Table Name, Target Count Total, Target Count Actual, Target Count Ignored, Source Count, Diff, Result"."\r\n";
 		
-			foreach ($EntitiesList as $entity) {
-				//check if TDM sequnece is on. if so, check if instance seq name has been provided. if so, get the new instance values
-				if($getNewInsVale){
-					$targetEntList = DBSelectAll($k2Proj_interface, 'select new_value from '.$sequencesTransTable.' where sequence_name = $1 and old_value = $2', $param = array($instanceSeqName, $entity[0]));//GILAD
-					$targetInstanceList = $targetEntList;
-				}else{
-					$targetInstanceList = $entity[0];
-				}
-				
+			foreach ($EntitiesList as $entity) {	
 				
 				$luTableList = DBSelectAll($TDMDB, 'select TABLE_NAME, sum(TABLE_COUNT) from INSTANCE_TABLE_COUNT where LU_NAME = $1 and EI = $2', SQL_FETCH_MODE_BOTH , $param = array($LUTName, $entity[0]));	
 				
 				foreach ($luTableList as $tableName) {	
 					//Check if to replace table name
 					$targetTableName = getTranslationValues($trnTableName, array(strtolower($tableName[0])) );
-					if($targetTableName[0] != '')$tableName[0] = str_replace('.','_',$targetTableName[0]);
+					// replace also . and @ with _ 
+					if($targetTableName[0] != '')
+					{
+						$tableName[0] = str_replace('.','_',$targetTableName[0]);
+						//in case interface has checked the "dynamic schema name" option --&gt; then table name has @ that should be removed
+						$tableName[0] = str_replace('@','_',$tableName[0]);
+					}
+					//
 					
 					//Adding achi's prefix to table name
 					$columnName = 't_main_tab_'.$tableName[0];
@@ -281,14 +353,40 @@ else {
 						}
 					//Add result to File's string only if source and taget dont macth
 					if(is_numeric($cntTarget) &amp;&amp; ($cntTarget - $tableName[1]) != 0 ){
+  					  //In case of Synthetic Data (Clone task): devide the number of target records in total number of cloned entities in order to get normalized counts in comparison to source counts
+  				  	if (getGlobalValue('TDM_SYNTHETIC_DATA') == 'true') {
+							    //Check if current LU is the ROOT LU of the Business Entity 
+								$is_parent_lu=DBSelectValue($TDMDB,"select PARENT_LU_ID from TASK_EXECUTION_LIST as tel , PRODUCT_LOGICAL_UNITS as plu 
+																	where tel.lu_id = plu.lu_id
+																	and tel.TASK_EXECUTION_ID=".$taskExeId." 
+																	and plu.lu_name='".$LUTName."'");
+							     if(is_null($is_parent_lu)) {
+									 //current LU is ROOT LU of the Business Entity --&gt; create entry in Redis so all child LUs will devide their counts with the total number of ROOT LU entities
+									 k2_createSharedSeq($taskExeId."@:@"."Clone_ROOT_LU_count",count($EntitiesList));
+									 $root_lu_entities_cnt=count($EntitiesList);
+								 } else {
+							  	    $root_lu_entities_cnt = k2_getSharedSeqValue($taskExeId."@:@"."Clone_ROOT_LU_count");
+								 }
+													
+							  $cntTarget = $cntTarget / $root_lu_entities_cnt;
+		  			  }
+						
 						$diff = $cntTarget - $tableName[1];
-						$rslt = ($diff != 0)? "Not Good":"Good";
-						$result .= $entity[0].', '.$tableName[0].", ".$cntTarget.", ".$cntTarget_Actual.", ".$cntIgnored.", ".$tableName[1].", ".$diff.", ".$rslt."\r\n";
+						$rslt = ($diff != 0)? "Mismatch":"OK";
+						
+						// In case of FABRIC_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report 
+				    		if ( $tableName[0] &lt;&gt; 'FABRIC_TDM_ROOT' &amp;&amp; $tableName[0] &lt;&gt; 'TDM_LU_TYPE_RELATION_EID' )
+								$result .= $entity[0].', '.$tableName[0].", ".$cntTarget.", ".$cntTarget_Actual.", ".$cntIgnored.", ".$tableName[1].", ".$diff.", ".$rslt."\r\n";
 					}
 				}
 		
 			}
 		//Save to file
+		//Add note at end of report that target numbers have been normalized due to CLONE task
+    	if (getGlobalValue('TDM_SYNTHETIC_DATA') == 'true') {
+	  		$result .= "\r\n\r\n\r\n\r\n*  Report was generated for SYNTHETIC_DATA (CLONE) task --&gt; target counts have been normalized in order to compare to single entity source counts.\r\n
+										  ** In case entire clone task has been completed successfully - counts should show OK match.\r\n   In case of failure in one of the cloned entities - this report will show Mismatch";
+		}
 		file_put_contents($Path, $result, FILE_APPEND);
 	}
 }</Code>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.6.3.4">
+  <Name>k2_getEntitySequence</Name>
+  <ID>Utilities.k2_getEntitySequence</ID>
+  <Category>Utilities</Category>
+  <FunctionLevel>Product</FunctionLevel>
+  <FunctionType>RegularFunction</FunctionType>
+  <FunctionType2>RegularFunction</FunctionType2>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <ApiFunction>false</ApiFunction>
+  <DecisionFunction>false</DecisionFunction>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc />
+  <Language>PHP</Language>
+  <FunctionBody>if (isset($GLOBALS['entityID'])){
+        $entityID = $GLOBALS['entityID'];
+        return $GLOBALS['k2']['processedEntities']['entities'][$entityID];
+    }else{
+        return false;
+    }</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <IsRootFunction>false</IsRootFunction>
+  <InputParams />
+  <OutputParams>
+    <Output name="out" id="fo.Utilities.k2_getEntitySequence.0" index="0" dataType="Text" />
+  </OutputParams>
+</KFunction>
