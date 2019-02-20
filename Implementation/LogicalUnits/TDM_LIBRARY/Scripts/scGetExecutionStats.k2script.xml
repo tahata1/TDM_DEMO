@@ -28,8 +28,8 @@ else {
 		//  3)create a Postgres interface same as k2Proj but set user and password according to execution ID
 		//    example : PG interface called 'PG_2' , ip=172.31.27.173, port=5432, database=k2view, User=k2proj45, Password=k2proj45
 		//  4)set $k2Proj_interface to your newly created PG interface name
-		$exeId = 1283;
-		$depId[2] = 2566;
+		$exeId = 164;
+		$depId[2] = 328;
 		$k2Proj_interface='proj11';
 		//
 		
@@ -203,8 +203,11 @@ else {
 					$rslt = ($diff != 0)? "Mismatch":"OK";			
 				}else{
 					$cntTarget = 'Table is not part of flow or Statistics is set to false in map';
-					$diff = 0;
-					$rslt = "Mismatch";				
+					$cntTarget_Actual = "NA";
+					$cntIgnored = "NA";
+					$tableName[1]="NA";
+					$diff = "NA";
+					$rslt = "NA";				
 					}
 				//Add result to File's string
 				  // In case of FABRIC_TDM_ROOT or TDM_LU_TYPE_RELATION_EID tables --&gt; Skip these tables so they won't be part of the report  
@@ -255,6 +258,8 @@ else {
 					}else{
 						$cntTarget = 'Table is not part of flow or Statistics is set to false in map';
 						$statsResult[$tableName[0]]['TARGET_COUNT'] = $cntTarget;
+						$statsResult[$tableName[0]]['TARGET_COUNT_ACTUAL'] = "NA";
+						$statsResult[$tableName[0]]['TARGET_COUNT_IGNORED'] = "NA";
 					}
 					
 					//Getting table count from Fabric
@@ -271,8 +276,8 @@ else {
 					//Add result to File's string
 					if(!is_numeric($tableCount['TARGET_COUNT']))
 					{
-						$diff = 0;
-						$rslt = "Mismatch";
+						$diff = "NA";
+						$rslt = "NA";
 					}else{
 						  //In case of Synthetic Data (Clone task): devide the number of target records in total number of cloned entities in order to get normalized counts in comparison to source counts
 					  	if (getGlobalValue('TDM_SYNTHETIC_DATA') == 'true') {
@@ -348,10 +353,12 @@ else {
 						
 						//Updating $cntTarget to hold the actual counts from COMPLETED entities + counts from 'DB_ERROR_IGNORED' records
 						$cntTarget = $cntTarget+$cntIgnored;
-						}else{
-						$cntTarget = 'Table is not part of flow or Statistics is set to false in map';				
-						}
-					//Add result to File's string only if source and taget dont macth
+					}else{
+						$cntTarget = 'Table is not part of flow or Statistics is set to false in map';	
+					}
+					
+					
+					//Add result to File's string only if source and target dont match
 					if(is_numeric($cntTarget) &amp;&amp; ($cntTarget - $tableName[1]) != 0 ){
   					  //In case of Synthetic Data (Clone task): devide the number of target records in total number of cloned entities in order to get normalized counts in comparison to source counts
   				  	if (getGlobalValue('TDM_SYNTHETIC_DATA') == 'true') {
