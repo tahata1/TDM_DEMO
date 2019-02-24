@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Translation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>trnLuRelation_Child</Name>
+  <InputNotFoundAction>Use_Default</InputNotFoundAction>
+  <SchemaColumns>
+    <Column>
+      <Title>TRN_SEQ</Title>
+      <ColumnName>TRN_SEQ</ColumnName>
+      <Direction>Input</Direction>
+      <Type>Integer</Type>
+      <Length>10</Length>
+      <Format />
+      <Index>0</Index>
+      <AllowNULL>true</AllowNULL>
+      <GridColumnProperties width="81" />
+    </Column>
+    <Column>
+      <Title>PARENT_LU</Title>
+      <ColumnName>PARENT_LU</ColumnName>
+      <Direction>Output</Direction>
+      <Type>Text</Type>
+      <Length>50</Length>
+      <Format />
+      <Index>0</Index>
+      <DefaultValueIsExpression>false</DefaultValueIsExpression>
+      <AllowNULL>true</AllowNULL>
+      <GridColumnProperties width="100" />
+    </Column>
+    <Column>
+      <Title>LUDB_SELECT_STT</Title>
+      <ColumnName>LUDB_SELECT_STT</ColumnName>
+      <Direction>Output</Direction>
+      <Type>SQL</Type>
+      <Length>200</Length>
+      <Format />
+      <Index>1</Index>
+      <DefaultValueIsExpression>false</DefaultValueIsExpression>
+      <AllowNULL>true</AllowNULL>
+      <GridColumnProperties width="719" />
+    </Column>
+    <Column>
+      <Title>ACTIVE</Title>
+      <ColumnName>ACTIVE</ColumnName>
+      <Direction>Output</Direction>
+      <Type>Boolean</Type>
+      <Length>1</Length>
+      <Format />
+      <Index>2</Index>
+      <DefaultValue>True</DefaultValue>
+      <DefaultValueIsExpression>false</DefaultValueIsExpression>
+      <AllowNULL>true</AllowNULL>
+      <GridColumnProperties width="48" />
+    </Column>
+    <Column>
+      <Title>IS_SEQ</Title>
+      <ColumnName>IS_SEQ</ColumnName>
+      <Direction>Output</Direction>
+      <Type>Boolean</Type>
+      <Length>1</Length>
+      <Format />
+      <Index>3</Index>
+      <DefaultValue>True</DefaultValue>
+      <DefaultValueIsExpression>false</DefaultValueIsExpression>
+      <AllowNULL>true</AllowNULL>
+      <GridColumnProperties width="48" />
+    </Column>
+  </SchemaColumns>
+  <IsImportFromSQL>false</IsImportFromSQL>
+  <IsDynamicData>false</IsDynamicData>
+  <ColumnMapping />
+  <TranslationData>
+    <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+      <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:MainDataTable="trnLuRelation_Child" msdata:UseCurrentLocale="true">
+        <xs:complexType>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="trnLuRelation_Child">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="TRN_SEQ" type="xs:long" minOccurs="0" />
+                  <xs:element name="PARENT_LU" default="" minOccurs="0">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:maxLength value="50" />
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+                  <xs:element name="LUDB_SELECT_STT" default="" minOccurs="0">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:maxLength value="200" />
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+                  <xs:element name="ACTIVE" type="xs:boolean" minOccurs="0" />
+                  <xs:element name="IS_SEQ" type="xs:boolean" minOccurs="0" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+    <diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">
+      <DocumentElement>
+        <trnLuRelation_Child diffgr:id="trnLuRelation_Child1" msdata:rowOrder="0">
+          <TRN_SEQ>1</TRN_SEQ>
+          <PARENT_LU>PATIENT_LU</PARENT_LU>
+          <LUDB_SELECT_STT>select distinct source_id, target_id as L_FK from tdm_seq_mapping where table_name='visit'</LUDB_SELECT_STT>
+          <ACTIVE>true</ACTIVE>
+          <IS_SEQ>true</IS_SEQ>
+        </trnLuRelation_Child>
+        <trnLuRelation_Child diffgr:id="trnLuRelation_Child2" msdata:rowOrder="1">
+          <TRN_SEQ>222</TRN_SEQ>
+          <PARENT_LU>PATIENT_LU</PARENT_LU>
+          <LUDB_SELECT_STT>select distinct source_id, target_id as L_FK, 'abc' as NEW_L_FK from tdm_seq_mapping where table_name='visit'</LUDB_SELECT_STT>
+          <ACTIVE>false</ACTIVE>
+          <IS_SEQ>false</IS_SEQ>
+        </trnLuRelation_Child>
+      </DocumentElement>
+    </diffgr:diffgram>
+  </TranslationData>
+  <DataRowsHeight>20</DataRowsHeight>
+</Translation>

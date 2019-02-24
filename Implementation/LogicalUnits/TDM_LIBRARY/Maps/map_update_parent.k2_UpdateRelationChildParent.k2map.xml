@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Graph name="map_update_parent.k2map.bin" version="2.7.0.3" >
+<virtualDB type="Full_Hierarchy">
+<inputs>
+<input id="tblCol_b599b57c5a97443d8dd3b8e007830bbd" recordType="" position="" tableName="ADI_ROOT_TABLE" tableAlias="" tableType="TableObject" dbTableName="" dbColName="" colAlias="IID" />
+</inputs>
+</virtualDB>
+<constants>
+</constants>
+<globals>
+</globals>
+<functions>
+</functions>
+<outputs>
+<target type="function" name="k2_UpdateRelationChildParent" category="SharedSequences" order="1000" distinct="False" joinType="None" offset="-1" limit="-1" stat="False" mode="Execute" onFailure="Reject_Entity" keyColumns="" >
+<Constraints />
+<IgnoredErrorMessagesIDs />
+<preExecCommandsList>
+</preExecCommandsList>
+<postExecCommandsList>
+</postExecCommandsList>
+<output id="o.k2_UpdateRelationChildParent.eid" columnName="eid" dataType="TEXT" position="1" valueID="tblCol_b599b57c5a97443d8dd3b8e007830bbd" length=""  />
+</target>
+</outputs>
+<filters>
+</filters>
+</Graph>

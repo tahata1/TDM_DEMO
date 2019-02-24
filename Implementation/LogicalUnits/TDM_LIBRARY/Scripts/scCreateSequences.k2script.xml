@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PhpScriptItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>scCreateSequences</Name>
+  <Code>
+/*
+This script is used in order to set the initial value of the sequences. 
+It is required only for method 0 &amp; 2 (postgres &amp; memcached)
+For Method 3 (from DB) and method 4 (GUID), there is no sequences managment within k2view and therefor there is no
+need to use this script
+For method 1, the initial value is being set when calling k2Seq_setBlock fucntion within the entity processing  
+*/
+
+
+
+//If sequence replacement is required
+if(getGlobalValue('TDM_REPLACE_SEQUENCES') == 'true' ){
+	
+	//gilad 5/9/2018 : Getting the task_id and target_env_name 
+	//in case of TDM : get from TDM GUI
+	$task_id = getGlobalValue("TDM_TASK_EXE_ID"); 
+	$target_env = getGlobalValue("TDM_TAR_ENV_NAME");
+	//if not TDM : set default values for TDM_TASK_EXE_ID and TDM_TAR_ENV_NAME
+	if (is_null($task_id) || empty($task_id)) $task_id=0;
+	if (is_null($target_env) || empty($target_env)) $target_env='default_tar_env';
+	//
+	
+	foreach ( loopThroughTranslationRecords('trnSequencesDefinition') as $keysArray=&gt;$sequenceDetails)
+	{ 
+		//Set the method based on trnSequenceDecisions 
+		$methods = k2Seq_decideMethods($keysArray[0]);
+		$method = $methods[1];
+		if ($method == '2'){
+		//Create Shared sequences starting from next value
+			if (k2_getSharedSeqValue($target_env."@:@".$keysArray[0]) == 0) {
+				$initValue = k2Seq_getInitVal($sequenceDetails,$method,$keysArray[0]);
+				k2_createSharedSeq($target_env."@:@".$keysArray[0],$initValue);
+			}
+		}		
+	}
+	
+	//gilad 5/9/2018 : 
+	//Create a redis sequence which will hold the appearance number of the entity within a task_id
+	//Loop through entity inclusion : for each (distinct) entity create a initialized redis sequence with value of 0
+	//Format of sequence: $task_id."@:@".$lu_name."@:@".$entity_id 
+	//Example : 3@:@MPI@:@12345
+	$lu_name=$GLOBALS['logicalUnit'];
+
+	if (isset($GLOBALS['debugMode'])) { // in debug mode
+		$EntityId='_dev_9489670662';  //please specify entity id to debug
+		k2_createSharedSeq($task_id."@:@".$lu_name."@:@".$EntityId,0);
+	} else { // in execution mode 
+		$exeId = k2_getExecutionId();
+		$depId = k2_getProcessExecutionInfo();
+		$entitiesTable = 'k2proj'.$exeId.'.k2ei_'.$exeId.'_'.$depId[2];
+	
+		$params = array();
+		foreach (loopThroughDBSqlResult('k2Proj', "select distinct entity_id from ".$entitiesTable, SQL_FETCH_MODE_ASSOC, $params) as $row) {
+			 k2_createSharedSeq($task_id."@:@".$lu_name."@:@".$row['entity_id'],0);
+		}
+	}
+}
+
+</Code>
+  <IsSyntaxValid>true</IsSyntaxValid>
+</PhpScriptItem>

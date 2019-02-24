@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.6.4.7">
+  <Name>k2_MarkChildrenRepNumAsFailed</Name>
+  <ID>SharedSequences.k2_MarkChildrenRepNumAsFailed</ID>
+  <Category>SharedSequences</Category>
+  <FunctionLevel>Project</FunctionLevel>
+  <FunctionType>RegularFunction</FunctionType>
+  <FunctionType2>RegularFunction</FunctionType2>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <ApiFunction>false</ApiFunction>
+  <DecisionFunction>false</DecisionFunction>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc>Create shared sequence that indicates this entity had failed 
+and mark all its children as failed so they won't pick this rep_num</Desc>
+  <Language>PHP</Language>
+  <FunctionBody>
+// Get details to retreive the rep_num from Redis
+$task_id = getGlobalValue("TDM_TASK_EXE_ID"); 
+if (is_null($task_id) || empty($task_id)) { 
+	$task_id=0; 
+	$src_env= 'default_src_env'; 
+} else {
+	$src_env= DBSelectValue('ludb','select source_env from ADI_ROOT_TABLE',$param=array());
+}
+	
+$lu_name=$GLOBALS['logicalUnit'];
+$entity_id = k2_getEntityId();
+//
+
+$failed_rep_num = k2_getSharedSeqValue($task_id."@:@".$lu_name."@:@".$entity_id);
+
+//mark this entity as failed 
+k2_createSharedSeq($task_id."@:@".$lu_name."@:@".$entity_id."@:@".$failed_rep_num,1);
+
+//mark this entity's children as failed
+$params = array();
+foreach (loopThroughDBSqlResult('ludb', 'select SOURCE_ENV, LU_TYPE_2, LU_TYPE2_EID from TDM_LU_TYPE_RELATION_EID', SQL_FETCH_MODE_ASSOC, $params) as $row) {
+	$full_entity_name = $row['SOURCE_ENV'].'_'.$row['LU_TYPE2_EID'];
+	k2_createSharedSeq($task_id."@:@".$row['LU_TYPE_2']."@:@".$full_entity_name."@:@".$failed_rep_num,1);
+}</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <IsRootFunction>false</IsRootFunction>
+  <InputParams>
+    <Input name="dummy_input" id="fi.SharedSequences.k2_MarkChildrenRepNumAsFailed.0" index="0" dataType="Text" />
+  </InputParams>
+  <OutputParams>
+    <Output name="dummy_output" id="fo.SharedSequences.k2_MarkChildrenRepNumAsFailed.0" index="0" dataType="Text" />
+  </OutputParams>
+  <HideMethodInUi>false</HideMethodInUi>
+</KFunction>

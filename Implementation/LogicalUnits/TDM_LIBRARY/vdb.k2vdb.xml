@@ -1,18 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<VirtualDB xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.6.2.3">
+<VirtualDB xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.7.0.3">
   <Name>vdb</Name>
-  <RootView />
-  <RootViewRecordType />
+  <RootView>ADI_ROOT_TABLE</RootView>
   <Views />
-  <Tables />
+  <Tables>
+    <Table>ADI_ROOT_TABLE</Table>
+  </Tables>
   <VCs />
-  <TablesProperties />
-  <EnrichmentsOrderList />
+  <TablesProperties>
+    <TableProperties name="ADI_ROOT_TABLE">
+      <Populations>
+        <Population id="enrichment.k2Seq_setUniqueGlobal" name="k2Seq_setUniqueGlobal" order="1" disabled="false" enrichment="true" />
+        <Population id="enrichment.k2Seq_updateSequences" name="k2Seq_updateSequences" order="1" disabled="false" enrichment="true" />
+        <Population id="popADI_ROOT_TABLE" name="popADI_ROOT_TABLE" order="1" disabled="false" enrichment="false" />
+      </Populations>
+    </TableProperties>
+  </TablesProperties>
+  <EnrichmentsOrderList>
+    <Item order="1" active="true" name="ADI_ROOT_TABLE" columnName="k2Seq_setUniqueGlobal" type="Function" />
+    <Item order="1" active="true" name="ADI_ROOT_TABLE" columnName="k2Seq_updateSequences" type="Function" />
+    <Item order="1" active="true" name="ADI_ROOT_TABLE" columnName="popADI_ROOT_TABLE" type="Population" />
+  </EnrichmentsOrderList>
   <ReferencesList />
-  <GCsOrderList>
-    <Item order="1" active="false" name="INSTANCE_TABLE_COUNT" type="Table" />
-  </GCsOrderList>
-  <PerEngineInitList />
+  <GCsOrderList />
+  <PerEngineInitList>
+    <Item order="1" active="false" name="k2_MigrateFailedEntity" type="Function" />
+    <Item order="2" active="false" name="k2Seq_createSequences" type="Function" />
+    <Item order="3" active="false" name="k2_MigrateFailedEntity_TDM" type="Function" />
+    <Item order="4" active="false" name="k2Seq_updateSequences" type="Function" />
+    <Item order="5" active="false" name="k2_PostFailedEntity" type="Function" />
+    <Item order="6" active="false" name="k2_LuRelationStatements" type="Function" />
+    <Item order="7" active="false" name="k2_RelationChildParent" type="Function" />
+    <Item order="8" active="false" name="k2Seq_setUniqueGlobal" type="Function" />
+    <Item order="9" active="false" name="k2_PostFailedEntity_TDM" type="Function" />
+  </PerEngineInitList>
   <Relations />
   <DatabaseRelations />
   <PreVCsSqlScript />
@@ -20,6 +41,10 @@
   <Indexes />
   <LudbProperties />
   <DiagramGraph>
-    <Graph version="2.6.2.3" name="vdb.k2vdb.xml" lastPartID="-1" />
+    <Graph version="2.7.0.3" name="vdb.k2vdb.xml" lastPartID="6">
+      <Node id="0" partID="0" name="ADI_ROOT_TABLE" isRootView="true" pos="72 251" size="257 184" listGroupSize="250 100" viewType="Table">
+        <TableProperties>{"TableName":"ADI_ROOT_TABLE","TablePopulationPropertiesList":[{"ID":"enrichment.k2Seq_setUniqueGlobal","Name":"k2Seq_setUniqueGlobal","Order":1,"Disabled":false,"IsEnrichment":true},{"ID":"enrichment.k2Seq_updateSequences","Name":"k2Seq_updateSequences","Order":1,"Disabled":false,"IsEnrichment":true},{"ID":"popADI_ROOT_TABLE","Name":"popADI_ROOT_TABLE","Order":1,"Disabled":false,"IsEnrichment":false}]}</TableProperties>
+      </Node>
+    </Graph>
   </DiagramGraph>
 </VirtualDB>

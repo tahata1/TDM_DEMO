@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TablePopulationObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <PopulationObjectName>popADI_ROOT_TABLE</PopulationObjectName>
+  <TableName>ADI_ROOT_TABLE</TableName>
+  <ID>popADI_ROOT_TABLE</ID>
+  <RootItemID>f_6</RootItemID>
+  <SimpleObject>false</SimpleObject>
+  <InputArguments>
+    <Arg name="dummy_input" id="fi_6.0" dataType="Text" index="0" />
+  </InputArguments>
+  <ItemsList>
+    <Item id="f_6" name="fnPop_ADI_ROOT_TABLE" nodeOrder="0" module="Function" mapObjectModule="Function" fileName="fnPop_ADI_ROOT_TABLE.k2function.xml">
+      <InputsList>
+        <Input id="fi_6.0" name="dummy_input" />
+      </InputsList>
+      <OutputsList>
+        <Output id="fo_6.0" name="k2_tdm_eid" />
+        <Output id="fo_6.1" name="source_env" />
+        <Output id="fo_6.2" name="IID" />
+        <Output id="fo_6.3" name="task_name" />
+        <Output id="fo_6.4" name="timestamp" />
+      </OutputsList>
+    </Item>
+  </ItemsList>
+  <LinksList>
+    <Link partId="11" fromNodeOrder="0" fromItemID="f_6" fromColID="fo_6.0" toItemID="tbl_ADI_ROOT_TABLE" toColID="tblCol_a62a217a9e624033a0a52b610ff29327" />
+    <Link partId="12" fromNodeOrder="0" fromItemID="f_6" fromColID="fo_6.1" toItemID="tbl_ADI_ROOT_TABLE" toColID="tblCol_75428296c67d47a68c53ce5f06beb89c" />
+    <Link partId="13" fromNodeOrder="0" fromItemID="f_6" fromColID="fo_6.2" toItemID="tbl_ADI_ROOT_TABLE" toColID="tblCol_b599b57c5a97443d8dd3b8e007830bbd" />
+  </LinksList>
+  <ModeKeyColumnIDs />
+  <DiagramGraph>
+    <Graph name="ADI_ROOT_TABLE.popADI_ROOT_TABLE.k2tablePop.xml" lastPartID="25">
+      <TableNode partID="0" name="ADI_ROOT_TABLE" pos="431 64" width="309.3241" />
+      <FunctionMapNode id="0" R0="1" R1="2" R2="3" R3="4" R4="5" L0="6" partID="6" topLabel="fnPop_ADI_ROOT_TABLE (6)" pos="110.560539 81" size="185.983032 85.45572" isRoot="true">
+        <KFunction>{"Name":"fnPop_ADI_ROOT_TABLE","ID":"f_6","Category":"Root","Version":"2.6.4.7","FunctionLevel":0,"FunctionType":0,"FunctionType2":1,"RegisterAsLuDbFunction":false,"SaveToDLUR":false,"ApiFunction":false,"DecisionFunction":false,"RequiresLuReference":false,"Desc":"","Language":0,"IsSyntaxValid":true,"IsRootFunction":true,"inputParams":[{"Name":"dummy_input","ID":"fi_6.0","Index":0,"DataType":"Text"}],"outputParams":[{"Name":"k2_tdm_eid","ID":"fo_6.0","Index":0,"DataType":"Text"},{"Name":"source_env","ID":"fo_6.1","Index":1,"DataType":"Text"},{"Name":"IID","ID":"fo_6.2","Index":2,"DataType":"Text"},{"Name":"task_name","ID":"fo_6.3","Index":3,"DataType":"Text"},{"Name":"timestamp","ID":"fo_6.4","Index":4,"DataType":"Text"}],"HideMethodInUi":false}</KFunction>
+      </FunctionMapNode>
+      <Link partID="11" from="1" to="7" pointsArr="272.682556 102.1276 282.682556 102.1276 421 95.03646 431 95.03646" fromNodePartID="6" fromNodeColumnName="k2_tdm_eid" toNodePartID="0" toNodeColumnName="K2_TDM_EID" />
+      <Link partID="12" from="2" to="8" pointsArr="272.682556 114.200516 282.682556 114.200516 421 107.109375 431 107.109375" fromNodePartID="6" fromNodeColumnName="source_env" toNodePartID="0" toNodeColumnName="SOURCE_ENV" />
+      <Link partID="13" from="3" to="9" pointsArr="272.682556 126.27343 282.682556 126.27343 421 119.182289 431 119.182289" fromNodePartID="6" fromNodeColumnName="IID" toNodePartID="0" toNodeColumnName="IID" />
+    </Graph>
+  </DiagramGraph>
+</TablePopulationObject>

@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.6.4.7">
+  <Name>fnPop_ADI_ROOT_TABLE</Name>
+  <ID>Root.fnPop_ADI_ROOT_TABLE</ID>
+  <Category>Root</Category>
+  <FunctionLevel>Project</FunctionLevel>
+  <FunctionType>RegularFunction</FunctionType>
+  <FunctionType2>RootFunction</FunctionType2>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <ApiFunction>false</ApiFunction>
+  <DecisionFunction>false</DecisionFunction>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc />
+  <Language>PHP</Language>
+  <FunctionBody>
+$entity_id=getEntityID();
+
+$k2_tdm_entity=explode('_',$entity_id);
+$k2_tdm_entity_size=sizeof($k2_tdm_entity);
+
+switch ($k2_tdm_entity_size) {
+		case 2 : //entity in the format of &lt;environment&gt;_&lt;entity_id&gt;
+				$env = $k2_tdm_entity[0];
+				$iid = $k2_tdm_entity[1];
+				break;
+		case 4 : //entity in the format of &lt;environment&gt;_&lt;entity_id&gt;_&lt;task_name&gt;_&lt;timestamp&gt;
+				$env = $k2_tdm_entity[0];
+				$iid = $k2_tdm_entity[1];
+				$task_name = $k2_tdm_entity[2];
+				$timestamp = $k2_tdm_entity[3];
+				break;
+}
+
+yield array ($entity_id,$env,$iid,$task_name,$timestamp);</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <IsRootFunction>true</IsRootFunction>
+  <InputParams>
+    <Input name="dummy_input" id="fi.Root.fnPop_ADI_ROOT_TABLE.0" index="0" dataType="Text" />
+  </InputParams>
+  <OutputParams>
+    <Output name="k2_tdm_eid" id="fo.Root.fnPop_ADI_ROOT_TABLE.0" index="0" dataType="Text" />
+    <Output name="source_env" id="fo.Root.fnPop_ADI_ROOT_TABLE.1" index="1" dataType="Text" />
+    <Output name="IID" id="fo.Root.fnPop_ADI_ROOT_TABLE.2" index="2" dataType="Text" />
+    <Output name="task_name" id="fo.Root.fnPop_ADI_ROOT_TABLE.3" index="3" dataType="Text" />
+    <Output name="timestamp" id="fo.Root.fnPop_ADI_ROOT_TABLE.4" index="4" dataType="Text" />
+  </OutputParams>
+  <HideMethodInUi>false</HideMethodInUi>
+</KFunction>

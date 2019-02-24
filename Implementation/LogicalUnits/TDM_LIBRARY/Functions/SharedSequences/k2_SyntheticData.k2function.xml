@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.6.4.0">
+  <Name>k2_SyntheticData</Name>
+  <ID>SharedSequences.k2_SyntheticData</ID>
+  <Category>SharedSequences</Category>
+  <FunctionLevel>Project</FunctionLevel>
+  <FunctionType>RegularFunction</FunctionType>
+  <FunctionType2>RegularFunction</FunctionType2>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <ApiFunction>false</ApiFunction>
+  <DecisionFunction>false</DecisionFunction>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc>Create shared sequence that indicates this entity had failed 
+and mark all its children as failed so they won't pick this rep_num</Desc>
+  <Language>PHP</Language>
+  <FunctionBody>
+// for TDM SYNTHETIC DATA (Clone) : every entity has rep number. in case entity has failed - we create a sequence
+// which will indicate this entity has failed + indicate all the entity's children with this $rep_num as failed as well 
+//(in order to process these children entities with a $rep_num that has not failed)
+// Sequence is created with the following format: $task_id."@:@".$lu_name."@:@".$entity_id."@:@".$rep_num ==&gt; 1 (1 indicates failure. if no such key exists -the entity did not fail).
+
+
+// initial value for $valid_rep_num so it will return 0 entity is not marked as failed
+$valid_rep_num=0;
+
+
+//Check if this entity was marked as failed by its parent LU entity because the parent entity failed ( marked it via k2_MarkChildrenRepNumAsFailed function )
+if (k2_getSharedSeqValue($task_id."@:@".$lu_name."@:@".$entity_id."@:@".$rep_num) == 1) 
+{  //if this entity that is being processed now is marked as failed (by its parent LU entity that had failed) -then mark all this entity's children as failed as well so they won't use this failed rep_num as well
+        // mark all child entities with current $rep_num as failed as well.
+	
+		$params = array();
+		foreach (loopThroughDBSqlResult('ludb', 'select LU_TYPE_2 , LU_TYPE2_EID from TDM_LU_TYPE_RELATION_EID', SQL_FETCH_MODE_ASSOC, $params) as $row) {
+			 k2_createSharedSeq($task_id."@:@".$row['LU_TYPE_2']."@:@".$row['LU_TYPE2_EID']."@:@".$rep_num,1);
+		}	
+	 	
+		// increase $rep_num till we get new $rep_num that its parent entity did not fail with this new $rep_num
+		$valid_rep_num = $rep_num;
+		while (k2_getSharedSeqValue($task_id."@:@".$lu_name."@:@".$entity_id."@:@".$valid_rep_num) == 1) 
+		{
+			  $valid_rep_num = k2_getSharedSeqNextValue($task_id."@:@".$lu_name."@:@".$entity_id,1); 
+		}
+}
+
+return $valid_rep_num;</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <IsRootFunction>false</IsRootFunction>
+  <InputParams>
+    <Input name="task_id" id="fi.SharedSequences.k2_SyntheticData.0" index="0" dataType="integer" />
+    <Input name="lu_name" id="fi.SharedSequences.k2_SyntheticData.1" index="1" dataType="Text" />
+    <Input name="entity_id" id="fi.SharedSequences.k2_SyntheticData.2" index="2" dataType="Text" />
+    <Input name="rep_num" id="fi.SharedSequences.k2_SyntheticData.3" index="3" dataType="integer" />
+  </InputParams>
+  <OutputParams>
+    <Output name="valid_rep_num" id="fo.SharedSequences.k2_SyntheticData.0" index="0" dataType="integer" />
+  </OutputParams>
+  <HideMethodInUi>false</HideMethodInUi>
+</KFunction>

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PhpScriptItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>scPopulateLURelation</Name>
+  <Code>// Create operationals tables
+DBExecute("TDM", "CREATE TABLE IF NOT EXISTS public.lu_relation_statements
+(
+  trn_seq integer NOT NULL,
+  child_lu_name character varying(50) NOT NULL,
+  target_interface character varying(50),
+  parent_lu_name character varying(50) NOT NULL,
+  update_statement character varying(200),
+  task_id integer NOT NULL,
+  CONSTRAINT lu_relation_statements_pkey PRIMARY KEY (trn_seq, parent_lu_name, child_lu_name, task_id)
+)");
+
+
+DBExecute("TDM", "CREATE TABLE IF NOT EXISTS public.lu_relation_values
+(
+  trn_seq integer NOT NULL,
+  parent_lu character varying(50) NOT NULL,
+  l_fk character varying(20) NOT NULL,
+  key_values text,
+  task_id integer NOT NULL,
+  CONSTRAINT lu_relation_values_pkey PRIMARY KEY (trn_seq, parent_lu, l_fk, task_id)
+)");
+
+
+// Populate lu_relation_statements
+k2_LuRelationStatements();</Code>
+  <IsSyntaxValid>true</IsSyntaxValid>
+</PhpScriptItem>

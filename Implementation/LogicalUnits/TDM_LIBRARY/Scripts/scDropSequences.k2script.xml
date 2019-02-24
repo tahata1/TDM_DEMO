@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PhpScriptItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>scDropSequences</Name>
+  <Code>/*
+This script is used to drop the sequences within k2view. 
+It is required only for method 0 &amp; 2 (postgres &amp; memcached)
+For Method 3 (from DB) and method 4 (GUID), there is no sequences managment within k2view and therefor there is no
+need to use this script
+For method 1, the initial value is being set when calling k2Seq_setBlock fucntion within the entity processing  
+*/
+
+foreach ( loopThroughTranslationRecords('trnSequencesDefinition') as $keysArray=&gt;$sequenceDetails)
+{
+	//Set the method based on trnSequencesDefinition.CONFIG_SET. If not set, get the value from the GLOBAL
+	$methods = k2Seq_decideMethods($keysArray[0]);
+	$method = $methods[1];
+	//Drop shared memory sequences
+	if ($method == '2')
+		k2_dropSharedSeq ($keysArray[0]);
+	elseif ($method == '0') //Drop postgres sequences
+		dropProjectSequence($keysArray[0]);
+	
+	if ($methods[0] == 'M')
+	{
+		memcache_flush();
+	}		
+}
+</Code>
+  <IsSyntaxValid>true</IsSyntaxValid>
+</PhpScriptItem>
