@@ -13,8 +13,13 @@ if($GLOBALS['debugMode'] == true){
 	//$taskExeId = 221702;
 	
 }
-else {	
-	$reportsPath = '/usr/local/k2view/k2apps/tdm_reports/';
+else {
+	//Check execution server type and set $reportsPath accordingly
+	if( isset($GLOBALS['EXECUTION_SERVER_TYPE']) &amp;&amp; strtolower(getGlobalValue("EXECUTION_SERVER_TYPE"))=="windows") {
+        $reportsPath = 'C:\\k2view\\k2admin\\www\\tdm_reports\\';
+    } else {
+        $reportsPath = '/usr/local/k2view/k2apps/tdm_reports/';
+    }
 	$taskExeId = getGlobalValue('TDM_TASK_EXE_ID');
 	$ExeId= k2_getExecutionId();
 }

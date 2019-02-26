@@ -18,9 +18,13 @@ if($statsMode=='Fabric_Only'){ // Report with counts only from Fabric
 	file_put_contents($Path, $result, FILE_APPEND);
 }
 else {
-
 	// Set param
-	$reportsPath = '/usr/local/k2view/k2apps/tdm_reports/';
+	//Check execution server type and set $reportsPath accordingly
+	if( isset($GLOBALS['EXECUTION_SERVER_TYPE']) &amp;&amp; strtolower(getGlobalValue("EXECUTION_SERVER_TYPE"))=="windows") {
+        $reportsPath = 'C:\\k2view\\k2admin\\www\\tdm_reports\\';
+    } else {
+        $reportsPath = '/usr/local/k2view/k2apps/tdm_reports/';
+    }
 	if($GLOBALS['debugMode'] == true){
 		//  Note : since script is running on Debug, please follow next steps :
 		//  1)set $exeId to the execution ID of your run
