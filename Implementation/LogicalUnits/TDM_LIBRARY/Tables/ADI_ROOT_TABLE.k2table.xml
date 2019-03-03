@@ -11,18 +11,5 @@
     <Column name="IID" id="tblCol_b599b57c5a97443d8dd3b8e007830bbd" index="2" datatype="Text" ludbProperty="false" serializationName="FIRST_NAME" />
   </Columns>
   <IndexesList />
-  <EnrichmentList>
-    <Enrichment>
-      <Name>k2Seq_setUniqueGlobal</Name>
-      <ExecuteEnrichmentAt>LUDB_Enrichment_Order</ExecuteEnrichmentAt>
-      <Type>Function</Type>
-      <TableName>ADI_ROOT_TABLE</TableName>
-    </Enrichment>
-    <Enrichment>
-      <Name>k2Seq_updateSequences</Name>
-      <ExecuteEnrichmentAt>LUDB_Enrichment_Order</ExecuteEnrichmentAt>
-      <Type>Function</Type>
-      <TableName>ADI_ROOT_TABLE</TableName>
-    </Enrichment>
-  </EnrichmentList>
+  <EnrichmentList />
 </TableObject>
