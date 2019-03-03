@@ -51,5 +51,9 @@
       <Value>false</Value>
       <Comment>This global is used to determine if to refresh the Logical Unit's reference data before the data migration</Comment>
     </MajorGlobalItem>
+    <MajorGlobalItem category="TDM" type="Constant" name="EXECUTION_SERVER_TYPE">
+      <Value>linux</Value>
+      <Comment>used for reports generation : for windows -&gt; enter "windows" . anything else is treated as linux</Comment>
+    </MajorGlobalItem>
   </ItemsList>
 </MajorGlobal>
