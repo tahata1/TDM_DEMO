@@ -55,5 +55,9 @@
       <Value>linux</Value>
       <Comment>used for reports generation : for windows -&gt; enter "windows" . anything else is treated as linux</Comment>
     </MajorGlobalItem>
+    <MajorGlobalItem type="Product" name="TDM_SOURCE_PRODUCT_VERSION">
+      <Value>1</Value>
+      <Comment>The version of the product on the source system</Comment>
+    </MajorGlobalItem>
   </ItemsList>
 </MajorGlobal>
