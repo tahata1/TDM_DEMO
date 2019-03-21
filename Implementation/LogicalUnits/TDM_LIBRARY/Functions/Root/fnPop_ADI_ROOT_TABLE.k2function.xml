@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.6.4.7">
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.7.0.4">
   <Name>fnPop_ADI_ROOT_TABLE</Name>
   <ID>Root.fnPop_ADI_ROOT_TABLE</ID>
   <Category>Root</Category>
@@ -24,11 +24,25 @@ switch ($k2_tdm_entity_size) {
 				$env = $k2_tdm_entity[0];
 				$iid = $k2_tdm_entity[1];
 				break;
+		case 3 ://entity in the format of _dev_&lt;entity_id&gt;
+				if ($GLOBALS['debugMode'] == true &amp;&amp; empty($k2_tdm_entity[0]) &amp;&amp; $k2_tdm_entity[1]=='dev' ) {
+					$env = '_dev';
+					$iid = $k2_tdm_entity[2];
+				}
+				break;
 		case 4 : //entity in the format of &lt;environment&gt;_&lt;entity_id&gt;_&lt;task_name&gt;_&lt;timestamp&gt;
 				$env = $k2_tdm_entity[0];
 				$iid = $k2_tdm_entity[1];
 				$task_name = $k2_tdm_entity[2];
-				$timestamp = $k2_tdm_entity[3];
+				$timestamp = $k2_tdm_entity[3];				
+				break;
+		case 5 ://entity in the format of _dev_&lt;entity_id&gt;_&lt;task_name&gt;_&lt;timestamp&gt;
+				if ( $GLOBALS['debugMode'] == true &amp;&amp; empty($k2_tdm_entity[0]) &amp;&amp; $k2_tdm_entity[1]=='dev' ) {
+				$env = '_dev';
+				$iid = $k2_tdm_entity[2];
+				$task_name = $k2_tdm_entity[3];
+				$timestamp = $k2_tdm_entity[4];
+				}
 				break;
 }
 
