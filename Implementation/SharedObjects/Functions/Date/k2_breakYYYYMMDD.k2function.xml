@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.7.0.4">
+  <Name>k2_breakYYYYMMDD</Name>
+  <ID>Date.k2_breakYYYYMMDD</ID>
+  <Category>Date</Category>
+  <FunctionLevel>Project</FunctionLevel>
+  <FunctionType>RegularFunction</FunctionType>
+  <FunctionType2>RegularFunction</FunctionType2>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <ApiFunction>false</ApiFunction>
+  <DecisionFunction>false</DecisionFunction>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc>This function will return the year, month and day of the given date</Desc>
+  <Language>PHP</Language>
+  <FunctionBody>$da = date_parse_from_format($format, $date);
+
+return array($da['year'],$da['month'],$da['day']);</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <IsRootFunction>false</IsRootFunction>
+  <InputParams>
+    <Input name="format" id="fi.Date.k2_breakYYYYMMDD.0" index="0" dataType="Text" />
+    <Input name="date" id="fi.Date.k2_breakYYYYMMDD.1" index="1" dataType="Text" />
+  </InputParams>
+  <OutputParams>
+    <Output name="year" id="fo.Date.k2_breakYYYYMMDD.0" index="0" dataType="integer" />
+    <Output name="month" id="fo.Date.k2_breakYYYYMMDD.1" index="1" dataType="integer" />
+    <Output name="day" id="fo.Date.k2_breakYYYYMMDD.2" index="2" dataType="integer" />
+  </OutputParams>
+  <HideMethodInUi>false</HideMethodInUi>
+</KFunction>
