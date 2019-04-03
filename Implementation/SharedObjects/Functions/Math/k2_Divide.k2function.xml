@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="2.7.0.4">
+  <Name>k2_Divide</Name>
+  <ID>Math.k2_Divide</ID>
+  <Category>Math</Category>
+  <FunctionLevel>Project</FunctionLevel>
+  <FunctionType>RegularFunction</FunctionType>
+  <FunctionType2>RegularFunction</FunctionType2>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <ApiFunction>false</ApiFunction>
+  <DecisionFunction>false</DecisionFunction>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc>k2_Divide first number by second number.
+ If the second number is zero, NULL is returned</Desc>
+  <Language>PHP</Language>
+  <FunctionBody>if (is_null($i_num_1) || is_null($i_num_2)){
+	return null;
+} 
+elseif ($i_num_2 == 0) {
+		return null;
+} else
+	return $i_num_1 / $i_num_2;</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <IsRootFunction>false</IsRootFunction>
+  <InputParams>
+    <Input name="i_num_1" id="fi.Math.k2_Divide.0" index="0" dataType="real" />
+    <Input name="i_num_2" id="fi.Math.k2_Divide.1" index="1" dataType="real" />
+  </InputParams>
+  <OutputParams>
+    <Output name="o_result" id="fo.Math.k2_Divide.0" index="0" dataType="real" />
+  </OutputParams>
+  <HideMethodInUi>false</HideMethodInUi>
+</KFunction>
